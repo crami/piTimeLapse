@@ -14,8 +14,35 @@ from itertools import chain
 
 SCREEN_SIZE = (320, 240)
 buttoncolor = 50,50,255
+wincolor = 40, 40, 90
 
+# Display the splash screen
+def splash():
+  newscreen()
+  font = pygame.font.SysFont('matthiascramerhandwriting', 24)
+  message = "Welcome to piTime"
+  label = font.render(message, True, (255,255,255))
+  label_rect = label.get_rect()
+  label_rect.center = screen_rect.center
 
+  """Blit image and text to the target surface."""
+  screen.blit(label, label_rect)
+  pygame.display.flip()
+  time.sleep(1)
+
+def butondemo():
+  for i in range (0, 4):
+    time.sleep(0.5)
+    buttonpress(i,1)
+    time.sleep(1)
+    buttonpress(i,0)
+
+# Prepare a new screen
+def newscreen():
+  #fill background
+  screen.fill(wincolor)
+
+# Draw the button labels
 def buttons(labels):
   btn = pygame.Rect(0, 0, screen_rect.width/4 - 6, 20)
 
@@ -30,10 +57,11 @@ def buttons(labels):
     label_rect.center = btn.center
     screen.blit(label, label_rect)
     
+# Mark a pressed button
 def buttonpress(num,toggle):
   width=(screen_rect.width/4)-6
   height=20
-  x=3+((screen_rect.width/4)*i)
+  x=3+((screen_rect.width/4)*num)
   y=screen_rect.height-20
   
   if (toggle):
@@ -43,39 +71,49 @@ def buttonpress(num,toggle):
 
   pygame.display.flip()
 
+
+""" Main """
+
 pygame.init()
 screen = pygame.display.set_mode(SCREEN_SIZE)
 screen_rect = screen.get_rect()
 pygame.display.set_caption('piTime')
+clock = pygame.time.Clock()
 
-wincolor = 40, 40, 90
-  
-#fill background
-screen.fill(wincolor)
+splash()
 
-#print(pygame.font.get_fonts())
-
-font = pygame.font.SysFont('matthiascramerhandwriting', 24)
-message = "Welcome to piTime"
-label = font.render(message, True, (255,255,255))
-label_rect = label.get_rect()
-label_rect.center = screen_rect.center
-
-"""Blit image and text to the target surface."""
-screen.blit(label, label_rect)
+newscreen()
 
 btn_labels=['Button 1','Button 2','Button 3','Button 4']
 buttons(btn_labels)
 
 pygame.display.flip()
 
-for i in range (0, 4):
-  time.sleep(2)
-  buttonpress(i,1)
-  time.sleep(2)
-  buttonpress(i,0)
-                            
 while(1):
-  if pygame.event.wait().type in (QUIT, KEYDOWN, MOUSEBUTTONDOWN):
-    break  
-    
+  clock.tick( 10 );
+
+  events = pygame.event.get()
+
+  for event in events:
+      if event.type == pygame.QUIT:
+        exit()
+      if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_q:
+          exit()
+        if event.key == pygame.K_1:
+          buttonpress(0,1)
+        if event.key == pygame.K_2:
+          buttonpress(1,1)
+        if event.key == pygame.K_3:
+          buttonpress(2,1)
+        if event.key == pygame.K_4:
+          buttonpress(3,1)
+      if event.type == pygame.KEYUP:
+        if event.key == pygame.K_1:
+          buttonpress(0,0)
+        if event.key == pygame.K_2:
+          buttonpress(1,0)
+        if event.key == pygame.K_3:
+          buttonpress(2,0)
+        if event.key == pygame.K_4:
+          buttonpress(3,0)
