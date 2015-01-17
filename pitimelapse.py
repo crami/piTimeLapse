@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 """
 """
@@ -72,10 +72,36 @@ def buttonpress(num,toggle):
   pygame.display.flip()
 
 
+def fbinit():
+  drivers = ['fbcon', 'directfb', 'svgalib']
+  found = False
+  for driver in drivers:
+    # Make sure that SDL_VIDEODRIVER is set
+    if not os.getenv('SDL_VIDEODRIVER'):
+      os.putenv('SDL_VIDEODRIVER', driver)
+    try:
+      pygame.display.init()
+    except pygame.error:
+      print 'Driver: {0} failed.'.format(driver)
+      continue
+    found = True
+    break
+ 
+  if not found:
+    raise Exception('No suitable video driver found!')
+  
+  size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
+  print "Framebuffer size: %d x %d" % (size[0], size[1])
+  return(size)
+
+
 """ Main """
 
+os.environ["SDL_FBDEV"] = "/dev/fb1"
 pygame.init()
-screen = pygame.display.set_mode(SCREEN_SIZE)
+size=fbinit()
+#screen = pygame.display.set_mode(SCREEN_SIZE)
+screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 screen_rect = screen.get_rect()
 pygame.display.set_caption('piTime')
 clock = pygame.time.Clock()
