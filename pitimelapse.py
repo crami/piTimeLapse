@@ -9,6 +9,12 @@ import pygame
 import time
 from pygame.locals import *
 from pygame.compat import unichr_, unicode_
+try:
+  import RPi.GPIO as GPIO
+  gpio=True
+except ImportError:
+  print"no GPIO module"
+  gpio=False
 
 from itertools import chain
 
@@ -16,6 +22,10 @@ os.environ["SDL_FBDEV"] = "/dev/fb1"
 SCREEN_SIZE = (320, 240)
 buttoncolor = 50,50,255
 wincolor = 40, 40, 90
+
+buttonPins = [17, 22, 23, 27]
+buttonState = [0, 0, 0, 0]
+buttonStateOld = buttonState[:]
 
 # Display the splash screen
 def splash():
@@ -102,6 +112,21 @@ def fbinit():
     screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
     return(screen)
 
+def gpioInit():
+  GPIO.setmode(GPIO.BCM)
+  GPIO.setwarnings(False)
+  for i in buttonPins:
+    GPIO.setup(i, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    
+def gpioGetButtons():
+  print "-----"
+  for i in range (0,4):
+    buttonState[i]=GPIO.input(buttonPins[i])
+    if (buttonStateOld[i] != buttonState[i]):
+      print('Event on button {0} -> {1}'.format(buttonPins[i], buttonState[i]))
+  return(buttonState)
+
+
 """ Main """
 
 pygame.init()
@@ -112,6 +137,9 @@ pygame.display.set_caption('piTime')
 clock = pygame.time.Clock()
 
 splash()
+
+if gpio:
+  gpioInit()
 
 newscreen()
 
@@ -124,6 +152,9 @@ while(1):
   clock.tick( 10 );
 
   events = pygame.event.get()
+  if gpio:
+    buttonevent = gpioGetButtons()
+    buttonStateOld = buttonevent[:]
 
   for event in events:
       if event.type == pygame.QUIT:
@@ -148,3 +179,4 @@ while(1):
           buttonpress(2,0)
         if event.key == pygame.K_4:
           buttonpress(3,0)
+          
