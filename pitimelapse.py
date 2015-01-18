@@ -105,7 +105,7 @@ def fbinit():
 """ Main """
 
 pygame.init()
-pygame.mouse.set_visible(false)
+pygame.mouse.set_visible(False)
 screen=fbinit()
 screen_rect = screen.get_rect()
 pygame.display.set_caption('piTime')
