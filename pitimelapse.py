@@ -21,6 +21,7 @@ from itertools import chain
 os.environ["SDL_FBDEV"] = "/dev/fb1"
 SCREEN_SIZE = (320, 240)
 buttoncolor = 50,50,255
+headercolor = 255,50,50
 wincolor = 40, 40, 90
 
 buttonPins = [17, 22, 23, 27]
@@ -29,7 +30,7 @@ buttonStateOld = buttonState[:]
 
 # Display the splash screen
 def splash():
-  newscreen()
+  newscreen("")
   font = pygame.font.SysFont('matthiascramerhandwriting', 24)
   message = "Welcome to piTime"
   label = font.render(message, True, (255,255,255))
@@ -49,9 +50,17 @@ def butondemo():
     buttonpress(i,0)
 
 # Prepare a new screen
-def newscreen():
-  #fill background
+def newscreen(title):
   screen.fill(wincolor)
+  if (title != ""):
+    header = pygame.Rect(0, 0, screen_rect.width, 20)
+    screen.fill(headercolor, header)
+    font = pygame.font.SysFont('ubuntu', 16)
+    label = font.render(title, True, (255,255,255))
+    label_rect = label.get_rect()
+    label_rect.x = 4
+    label_rect.y = 2
+    screen.blit(label, label_rect)
 
 # Draw the button labels
 def buttons(labels):
@@ -82,7 +91,7 @@ def buttonpress(num,toggle):
 
   pygame.display.flip()
 
-
+# Framebuffer init
 def fbinit():
   disp_no = os.getenv("DISPLAY")
   if disp_no:
@@ -111,6 +120,7 @@ def fbinit():
     print("Framebuffer size: %d x %d" % (size[0], size[1]))
     screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
     return(screen)
+
 
 def gpioInit():
   GPIO.setmode(GPIO.BCM)
@@ -143,7 +153,7 @@ splash()
 if gpio:
   gpioInit()
 
-newscreen()
+newscreen("piTimeLapse")
 
 btn_labels=['Button 1','Button 2','Button 3','Button 4']
 buttons(btn_labels)
