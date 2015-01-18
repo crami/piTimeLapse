@@ -70,7 +70,7 @@ def newscreen(title):
 def buttons(labels):
   btn = pygame.Rect(0, 0, screen_rect.width/4 - 6, 20)
 
-  font = pygame.font.SysFont('ubuntu', 12)
+  font = pygame.font.SysFont('ubuntu', 14)
   
   for i in range (0, 4):
     btn.x=3+((screen_rect.width/4)*i)
