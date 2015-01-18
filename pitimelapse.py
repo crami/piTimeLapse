@@ -23,9 +23,13 @@ SCREEN_SIZE = (320, 240)
 buttoncolor = 50,50,255
 wincolor = 40, 40, 90
 
-buttonPins = [17, 22, 23, 27]
-buttonState = [0, 0, 0, 0]
-buttonStateOld = buttonState[:]
+# Raspberry PI revision (GPIO has changed between 1 and 2)
+if GPIO.RPI_REVISION == 1:
+  buttonPins = [17, 22, 23, 21]
+else:
+  buttonPins = [17, 22, 23, 27]
+
+buttonStateOld = [1, 1, 1, 1]
 
 # Display the splash screen
 def splash():
@@ -120,13 +124,22 @@ def gpioInit():
     print("GPIO {0} init".format(i))
     
 def gpioGetButtons():
-  print("-----")
+  buttonState = [0, 0, 0, 0]
+  global buttonStateOld
+  buttonevent = {"type": "none", "button": 99}
+  
   for i in range (0,4):
     buttonState[i]=GPIO.input(buttonPins[i])
-    print("Button {0} -> {1}".format(i,buttonState[i]))
     if (buttonStateOld[i] != buttonState[i]):
       print('Event on button {0} -> {1}'.format(buttonPins[i], buttonState[i]))
-  return(buttonState)
+      if (buttonState[i] == 0):
+        buttonevent["type"]=pygame.KEYDOWN
+      if (buttonState[i] == 1):  
+        buttonevent["type"]=pygame.KEYUP
+      buttonevent["button"]=i
+      buttonpress(i,not buttonState[i])
+  buttonStateOld = buttonState[:]
+  return(buttonevent)
 
 
 """ Main """
@@ -153,11 +166,14 @@ pygame.display.flip()
 while(1):
   clock.tick( 10 );
 
-  events = pygame.event.get()
   if gpio:
     buttonevent = gpioGetButtons()
-    buttonStateOld = buttonevent[:]
-
+    if buttonevent["type"] == pygame.KEYDOWN:
+      print("Button {0} pressed".format(buttonevent["button"]))
+    if buttonevent["type"] == pygame.KEYUP:
+      print("Button {0} released".format(buttonevent["button"]))
+    
+  events = pygame.event.get()
   for event in events:
       if event.type == pygame.QUIT:
         exit()
