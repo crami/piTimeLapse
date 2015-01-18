@@ -12,6 +12,7 @@ from pygame.compat import unichr_, unicode_
 
 from itertools import chain
 
+os.environ["SDL_FBDEV"] = "/dev/fb1"
 SCREEN_SIZE = (320, 240)
 buttoncolor = 50,50,255
 wincolor = 40, 40, 90
@@ -73,35 +74,38 @@ def buttonpress(num,toggle):
 
 
 def fbinit():
-  drivers = ['fbcon', 'directfb', 'svgalib']
-  found = False
-  for driver in drivers:
-    # Make sure that SDL_VIDEODRIVER is set
-    if not os.getenv('SDL_VIDEODRIVER'):
-      os.putenv('SDL_VIDEODRIVER', driver)
-    try:
-      pygame.display.init()
-    except pygame.error:
-      print 'Driver: {0} failed.'.format(driver)
-      continue
-    found = True
-    break
+  disp_no = os.getenv("DISPLAY")
+  if disp_no:
+    print("I'm running under X display = {0}".format(disp_no))
+    screen = pygame.display.set_mode(SCREEN_SIZE)
+    return(screen)
+  else:
+    drivers = ['fbcon', 'directfb', 'svgalib']
+    found = False
+    for driver in drivers:
+      # Make sure that SDL_VIDEODRIVER is set
+      if not os.getenv('SDL_VIDEODRIVER'):
+        os.putenv('SDL_VIDEODRIVER', driver)
+      try:
+        pygame.display.init()
+      except pygame.error:
+        print('Driver: {0} failed.'.format(driver))
+        continue
+      found = True
+      break
  
-  if not found:
-    raise Exception('No suitable video driver found!')
+    if not found:
+      raise(Exception('No suitable video driver found!'))
   
-  size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
-  print "Framebuffer size: %d x %d" % (size[0], size[1])
-  return(size)
-
+    size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
+    print("Framebuffer size: %d x %d" % (size[0], size[1]))
+    screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+    return(screen)
 
 """ Main """
 
-os.environ["SDL_FBDEV"] = "/dev/fb1"
 pygame.init()
-size=fbinit()
-#screen = pygame.display.set_mode(SCREEN_SIZE)
-screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+screen=fbinit()
 screen_rect = screen.get_rect()
 pygame.display.set_caption('piTime')
 clock = pygame.time.Clock()
