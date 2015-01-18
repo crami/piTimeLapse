@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 """
@@ -13,7 +13,7 @@ try:
   import RPi.GPIO as GPIO
   gpio=True
 except ImportError:
-  print"no GPIO module"
+  print("no GPIO module")
   gpio=False
 
 from itertools import chain
@@ -117,11 +117,13 @@ def gpioInit():
   GPIO.setwarnings(False)
   for i in buttonPins:
     GPIO.setup(i, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    print("GPIO {0} init".format(i))
     
 def gpioGetButtons():
-  print "-----"
+  print("-----")
   for i in range (0,4):
     buttonState[i]=GPIO.input(buttonPins[i])
+    print("Button {0} -> {1}".format(i,buttonState[i]))
     if (buttonStateOld[i] != buttonState[i]):
       print('Event on button {0} -> {1}'.format(buttonPins[i], buttonState[i]))
   return(buttonState)
@@ -130,9 +132,9 @@ def gpioGetButtons():
 """ Main """
 
 pygame.init()
-pygame.mouse.set_visible(False)
 screen=fbinit()
 screen_rect = screen.get_rect()
+pygame.mouse.set_visible(False)
 pygame.display.set_caption('piTime')
 clock = pygame.time.Clock()
 
