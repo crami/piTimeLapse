@@ -159,6 +159,46 @@ def mainScreen():
   buttons(btn_labels)
 
   pygame.display.flip()
+  while (1):
+    button=getbuttonevent()
+    print("Button {0} got pressed".format(button))
+    
+
+def getbuttonevent():
+  while(1):
+    clock.tick( 10 );
+
+    if gpio:
+      buttonevent = gpioGetButtons()
+      if buttonevent["type"] == pygame.KEYDOWN:
+        print("Button {0} pressed".format(buttonevent["button"]))
+        return(buttonevent["button"])
+      if buttonevent["type"] == pygame.KEYUP:
+        print("Button {0} released".format(buttonevent["button"]))
+    
+    events = pygame.event.get()
+    for event in events:
+        if event.type == pygame.QUIT:
+          exit()
+        if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+          if event.type == pygame.KEYDOWN:
+            toggle=1
+          if event.type == pygame.KEYUP:
+            toggle=0
+            
+          if event.key == pygame.K_q:
+            exit()
+          if event.key == pygame.K_1:
+            button=0
+          if event.key == pygame.K_2:
+            button=1
+          if event.key == pygame.K_3:
+            button=2
+          if event.key == pygame.K_4:
+            button=3
+          buttonpress(button,toggle)
+          if (toggle==1):
+            return(button)
 
 
 """ Main """
@@ -172,10 +212,11 @@ clock = pygame.time.Clock()
 
 splash()
 
-mainScreen()
-
 if gpio:
   gpioInit()
+
+mainScreen()
+
 
 while(1):
   clock.tick( 10 );
