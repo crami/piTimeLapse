@@ -25,10 +25,11 @@ headercolor = 255,50,50
 wincolor = 40, 40, 90
 
 # Raspberry PI revision (GPIO has changed between 1 and 2)
-if GPIO.RPI_REVISION == 1:
-  buttonPins = [17, 22, 23, 21]
-else:
-  buttonPins = [17, 22, 23, 27]
+if gpio:
+  if GPIO.RPI_REVISION == 1:
+    buttonPins = [17, 22, 23, 21]
+  else:
+    buttonPins = [17, 22, 23, 27]
 
 buttonStateOld = [1, 1, 1, 1]
 
@@ -151,6 +152,14 @@ def gpioGetButtons():
   buttonStateOld = buttonState[:]
   return(buttonevent)
 
+def mainScreen():
+  newscreen("piTimeLapse")
+
+  btn_labels=['Up','Down','Select','Exit']
+  buttons(btn_labels)
+
+  pygame.display.flip()
+
 
 """ Main """
 
@@ -163,15 +172,10 @@ clock = pygame.time.Clock()
 
 splash()
 
+mainScreen()
+
 if gpio:
   gpioInit()
-
-newscreen("piTimeLapse")
-
-btn_labels=['Button 1','Button 2','Button 3','Button 4']
-buttons(btn_labels)
-
-pygame.display.flip()
 
 while(1):
   clock.tick( 10 );
