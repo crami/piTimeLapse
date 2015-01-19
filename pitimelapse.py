@@ -220,7 +220,7 @@ def checkoverflow(list, index):
 def mainScreen():
   newscreen("piTimeLapse")
 
-  btn_labels=['Up','Down','Select','Exit']
+  btn_labels=['↓ Down','↑ Up','Select','Exit']
   buttons(btn_labels)
 
   menu=["Config","Start Timelapse","System"]
