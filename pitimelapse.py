@@ -142,7 +142,7 @@ def gpioGetButtons():
   for i in range (0,4):
     buttonState[i]=GPIO.input(buttonPins[i])
     if (buttonStateOld[i] != buttonState[i]):
-      print('Event on button {0} -> {1}'.format(buttonPins[i], buttonState[i]))
+#      print('Event on button {0} -> {1}'.format(buttonPins[i], buttonState[i]))
       if (buttonState[i] == 0):
         buttonevent["type"]=pygame.KEYDOWN
       if (buttonState[i] == 1):  
@@ -171,10 +171,10 @@ def getbuttonevent():
     if gpio:
       buttonevent = gpioGetButtons()
       if buttonevent["type"] == pygame.KEYDOWN:
-        print("Button {0} pressed".format(buttonevent["button"]))
+#        print("Button {0} pressed".format(buttonevent["button"]))
         return(buttonevent["button"])
-      if buttonevent["type"] == pygame.KEYUP:
-        print("Button {0} released".format(buttonevent["button"]))
+#      if buttonevent["type"] == pygame.KEYUP:
+#        print("Button {0} released".format(buttonevent["button"]))
     
     events = pygame.event.get()
     for event in events:
@@ -216,40 +216,3 @@ if gpio:
   gpioInit()
 
 mainScreen()
-
-
-while(1):
-  clock.tick( 10 );
-
-  if gpio:
-    buttonevent = gpioGetButtons()
-    if buttonevent["type"] == pygame.KEYDOWN:
-      print("Button {0} pressed".format(buttonevent["button"]))
-    if buttonevent["type"] == pygame.KEYUP:
-      print("Button {0} released".format(buttonevent["button"]))
-    
-  events = pygame.event.get()
-  for event in events:
-      if event.type == pygame.QUIT:
-        exit()
-      if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_q:
-          exit()
-        if event.key == pygame.K_1:
-          buttonpress(0,1)
-        if event.key == pygame.K_2:
-          buttonpress(1,1)
-        if event.key == pygame.K_3:
-          buttonpress(2,1)
-        if event.key == pygame.K_4:
-          buttonpress(3,1)
-      if event.type == pygame.KEYUP:
-        if event.key == pygame.K_1:
-          buttonpress(0,0)
-        if event.key == pygame.K_2:
-          buttonpress(1,0)
-        if event.key == pygame.K_3:
-          buttonpress(2,0)
-        if event.key == pygame.K_4:
-          buttonpress(3,0)
-          
