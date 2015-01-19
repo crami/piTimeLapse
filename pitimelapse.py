@@ -20,9 +20,11 @@ from itertools import chain
 
 os.environ["SDL_FBDEV"] = "/dev/fb1"
 SCREEN_SIZE = (320, 240)
+
 buttoncolor = 50,50,255
 headercolor = 255,50,50
 wincolor = 40, 40, 90
+menucolor = [[50,50,100],[255,50,50]]
 
 # Raspberry PI revision (GPIO has changed between 1 and 2)
 if gpio:
@@ -126,7 +128,7 @@ def fbinit():
     screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
     return(screen)
 
-
+# GPIO Init for Buttons
 def gpioInit():
   GPIO.setmode(GPIO.BCM)
   GPIO.setwarnings(False)
@@ -134,6 +136,7 @@ def gpioInit():
     GPIO.setup(i, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     print("GPIO {0} init".format(i))
     
+# Get Gpio Button event
 def gpioGetButtons():
   buttonState = [0, 0, 0, 0]
   global buttonStateOld
@@ -152,18 +155,8 @@ def gpioGetButtons():
   buttonStateOld = buttonState[:]
   return(buttonevent)
 
-def mainScreen():
-  newscreen("piTimeLapse")
 
-  btn_labels=['Up','Down','Select','Exit']
-  buttons(btn_labels)
-
-  pygame.display.flip()
-  while (1):
-    button=getbuttonevent()
-    print("Button {0} got pressed".format(button))
-    
-
+# Get Button or Keypresses
 def getbuttonevent():
   while(1):
     clock.tick( 10 );
@@ -178,6 +171,7 @@ def getbuttonevent():
     
     events = pygame.event.get()
     for event in events:
+        button=-1
         if event.type == pygame.QUIT:
           exit()
         if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
@@ -199,6 +193,51 @@ def getbuttonevent():
           buttonpress(button,toggle)
           if (toggle==1):
             return(button)
+
+# Draw a select list menu
+def drawselectmenu(items,select):
+  li = pygame.Rect(0, 0, screen_rect.width*0.8 , 24)
+  font = pygame.font.SysFont('ubuntu', 18)
+
+  for i, val in enumerate(items):
+
+      li.x=(screen_rect.width*0.1)
+      li.y=((screen_rect.height/8) * i) + 40
+      screen.fill(menucolor[1 if i == select else 0], li)
+      label = font.render(val, True, (255,255,255))
+      label_rect = label.get_rect()
+      label_rect.center = li.center
+      screen.blit(label, label_rect)
+      
+  pygame.display.flip()
+    
+def checkoverflow(list, index):
+  if (index < 0): index=len(list)-1
+  if (index >= len(list)): index=0
+  return(index)
+
+# Main Screen
+def mainScreen():
+  newscreen("piTimeLapse")
+
+  btn_labels=['Up','Down','Select','Exit']
+  buttons(btn_labels)
+
+  menu=["Config","Start Timelapse","System"]
+  select=0
+
+  pygame.display.flip()
+  while (1):
+    drawselectmenu(menu,select)
+    button=getbuttonevent()
+    print("Button {0} got pressed".format(button))
+    if button == 0:
+      select=select+1
+    else:
+      if button ==1:
+        select=select-1
+
+    select=checkoverflow(menu,select)
 
 
 """ Main """
