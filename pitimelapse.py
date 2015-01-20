@@ -269,7 +269,7 @@ def configScreen():
 
 #TimeLapse Screen
 def timeLapseScreen():
-  newscreen("piTimeLapse - TimeLapse")
+  newscreen("piTimeLapse - Time Lapse")
 
   btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
   buttons(btn_labels)
