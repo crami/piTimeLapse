@@ -224,20 +224,102 @@ def mainScreen():
   buttons(btn_labels)
 
   menu=["Config","Start Timelapse","System"]
+  menu_f = { 0: configScreen, 1: timeLapseScreen, 2: systemScreen }
   select=0
 
   pygame.display.flip()
   while (1):
     drawselectmenu(menu,select)
     button=getbuttonevent()
-    print("Button {0} got pressed".format(button))
     if button == 0:
       select=select+1
     else:
-      if button ==1:
+      if button == 1:
         select=select-1
-
     select=checkoverflow(menu,select)
+    if button == 2:
+      menu_f[select]()
+      
+      
+#Config Screen
+def configScreen():
+  newscreen("piTimeLapse - Config")
+
+  btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
+  buttons(btn_labels)
+
+  menu=["Intervall","Stepsize","Length","Save","Load"]
+  menu_f = { 0: configScreen, 1: timeLapseScreen, 2: systemScreen }
+  select=0
+
+  pygame.display.flip()
+  while (1):
+    drawselectmenu(menu,select)
+    button=getbuttonevent()
+    if button == 0:
+      select=select+1
+    else:
+      if button == 1:
+        select=select-1
+    select=checkoverflow(menu,select)
+    if button == 2:
+      menu_f[select]()
+    if button == 3:
+      mainScreen()
+
+#TimeLapse Screen
+def timeLapseScreen():
+  newscreen("piTimeLapse - TimeLapse")
+
+  btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
+  buttons(btn_labels)
+
+  menu=["Intervall","Stepsize","Length","Save","Load"]
+  menu_f = { 0: configScreen, 1: timeLapseScreen, 2: systemScreen }
+  select=0
+
+  pygame.display.flip()
+  while (1):
+    drawselectmenu(menu,select)
+    button=getbuttonevent()
+    if button == 0:
+      select=select+1
+    else:
+      if button == 1:
+        select=select-1
+    select=checkoverflow(menu,select)
+    if button == 2:
+      menu_f[select]()
+    if button == 3:
+      mainScreen()
+
+
+#System Screen
+def systemScreen():
+  newscreen("piTimeLapse - System")
+
+  btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
+  buttons(btn_labels)
+
+  menu=["Intervall","Stepsize","Length","Save","Load"]
+  menu_f = { 0: configScreen, 1: timeLapseScreen, 2: systemScreen }
+  select=0
+
+  pygame.display.flip()
+  while (1):
+    drawselectmenu(menu,select)
+    button=getbuttonevent()
+    if button == 0:
+      select=select+1
+    else:
+      if button == 1:
+        select=select-1
+    select=checkoverflow(menu,select)
+    if button == 2:
+      menu_f[select]()
+    if button == 3:
+      mainScreen()
+
 
 
 """ Main """
