@@ -73,7 +73,7 @@ def newscreen(title):
 def buttons(labels):
   btn = pygame.Rect(0, 0, screen_rect.width/4 - 6, 20)
 
-  font = pygame.font.SysFont('ubuntu', 16)
+  font = pygame.font.Font('FreeSans.ttf', 14)
   
   for i in range (0, 4):
     btn.x=3+((screen_rect.width/4)*i)
@@ -220,7 +220,7 @@ def checkoverflow(list, index):
 def mainScreen():
   newscreen("piTimeLapse")
 
-  btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
+  btn_labels=[u'▼ Down',u'▲ Up',u'⇒ Select',u'↩ Exit']
   buttons(btn_labels)
 
   menu=["Config","Start Timelapse","System"]
