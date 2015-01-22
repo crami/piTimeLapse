@@ -35,6 +35,11 @@ if gpio:
 
 buttonStateOld = [1, 1, 1, 1]
 
+tlSet = { 'Intervall' : 10,
+          'Stepsize'  : 10,
+          'Length'    : 180
+        }
+
 # Display the splash screen
 def splash():
   newscreen("")
@@ -210,7 +215,35 @@ def drawselectmenu(items,select):
       screen.blit(label, label_rect)
       
   pygame.display.flip()
-    
+
+
+# Draw a settings menu
+def drawsettingsmenu(settings,select):
+  li = pygame.Rect(0, 0, screen_rect.width*0.8 , 24)
+  font = pygame.font.SysFont('ubuntu', 18)
+  i = 0
+  
+  for key in settings:
+      print(settings[key])
+  
+      li.x=(screen_rect.width*0.1)
+      li.y=((screen_rect.height/8) * i) + 40
+      screen.fill(menucolor[1 if i == select else 0], li)
+      label = font.render(key, True, (255,255,255))
+      label_rect = label.get_rect()
+      label_rect.center = li.center
+      label_rect.x = li.x + 8
+      screen.blit(label, label_rect)
+      val = font.render(str(settings[key]), True, (255,255,255))
+      val_rect = label.get_rect()
+      val_rect.center = li.center
+      val_rect.x = screen_rect.width*0.7
+      screen.blit(val, val_rect)
+      i = i + 1
+      pygame.display.flip()
+
+
+# Check overflow of menu selector    
 def checkoverflow(list, index):
   if (index < 0): index=len(list)-1
   if (index >= len(list)): index=0
@@ -248,24 +281,23 @@ def configScreen():
   btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
   buttons(btn_labels)
 
-  menu=["Intervall","Stepsize","Length","Save","Load"]
-  menu_f = { 0: configScreen, 1: timeLapseScreen, 2: systemScreen }
   select=0
 
   pygame.display.flip()
   while (1):
-    drawselectmenu(menu,select)
+    drawsettingsmenu(tlSet,select)
     button=getbuttonevent()
     if button == 0:
       select=select+1
     else:
       if button == 1:
         select=select-1
-    select=checkoverflow(menu,select)
+    select=checkoverflow(tlSet,select)
     if button == 2:
       menu_f[select]()
     if button == 3:
       mainScreen()
+
 
 #TimeLapse Screen
 def timeLapseScreen():
