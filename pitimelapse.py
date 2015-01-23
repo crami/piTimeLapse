@@ -24,7 +24,7 @@ SCREEN_SIZE = (320, 240)
 buttoncolor = 50,50,255
 headercolor = 255,50,50
 wincolor = 40, 40, 90
-menucolor = [[50,50,100],[255,50,50]]
+menucolor = [[50,50,100],[255,50,50],[200,75,75]]
 
 # Raspberry PI revision (GPIO has changed between 1 and 2)
 if gpio:
@@ -39,6 +39,11 @@ tlSet = { 'Intervall' : 10,
           'Stepsize'  : 10,
           'Length'    : 180
         }
+        
+tlUnits = { 'Intervall' : 's',
+            'Stepsize'  : 'mm',
+            'Length'    : 'cm'
+          }
 
 # Display the splash screen
 def splash():
@@ -218,7 +223,7 @@ def drawselectmenu(items,select):
 
 
 # Draw a settings menu
-def drawsettingsmenu(settings,select):
+def drawsettingsmenu(settings,units,select,selected):
   li = pygame.Rect(0, 0, screen_rect.width*0.8 , 24)
   font = pygame.font.SysFont('ubuntu', 18)
   i = 0
@@ -234,7 +239,14 @@ def drawsettingsmenu(settings,select):
       label_rect.center = li.center
       label_rect.x = li.x + 8
       screen.blit(label, label_rect)
-      val = font.render(str(settings[key]), True, (255,255,255))
+
+      if (i == selected):
+        highlight=pygame.Rect(0, 0, screen_rect.width*0.2+4 , 24)
+        highlight.x=(screen_rect.width*0.7-4)
+        highlight.y=((screen_rect.height/8) * i) + 40
+        screen.fill(menucolor[2], highlight)
+        
+      val = font.render(str(settings[key])+" "+units[key], True, (255,255,255))
       val_rect = label.get_rect()
       val_rect.center = li.center
       val_rect.x = screen_rect.width*0.7
@@ -282,21 +294,34 @@ def configScreen():
   buttons(btn_labels)
 
   select=0
+  selected=99
+  selkeys=list(tlSet.keys())
+  print(selkeys)
 
   pygame.display.flip()
   while (1):
-    drawsettingsmenu(tlSet,select)
+    drawsettingsmenu(tlSet,tlUnits,select,selected)
     button=getbuttonevent()
+
     if button == 0:
-      select=select+1
+      if selected==99:
+        select=select+1
+      else:
+        tlSet[selkeys[select]]+=1
     else:
       if button == 1:
-        select=select-1
+        if selected==99:
+          select=select-1
+        else:
+          tlSet[selkeys[select]]-=1
     select=checkoverflow(tlSet,select)
     if button == 2:
-      menu_f[select]()
+      selected=select
     if button == 3:
-      mainScreen()
+      if selected==99:
+        mainScreen()
+      else:
+        selected=99
 
 
 #TimeLapse Screen
