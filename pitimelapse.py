@@ -307,13 +307,13 @@ def configScreen():
       if selected==99:
         select=select+1
       else:
-        tlSet[selkeys[select]]+=1
+        tlSet[selkeys[select]]-=1
     else:
       if button == 1:
         if selected==99:
           select=select-1
         else:
-          tlSet[selkeys[select]]-=1
+          tlSet[selkeys[select]]+=1
     select=checkoverflow(tlSet,select)
     if button == 2:
       selected=select
