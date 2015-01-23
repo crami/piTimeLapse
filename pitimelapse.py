@@ -229,8 +229,6 @@ def drawsettingsmenu(settings,units,select,selected):
   i = 0
   
   for key in settings:
-      print(settings[key])
-  
       li.x=(screen_rect.width*0.1)
       li.y=((screen_rect.height/8) * i) + 40
       screen.fill(menucolor[1 if i == select else 0], li)
