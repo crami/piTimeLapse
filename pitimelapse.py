@@ -50,6 +50,8 @@ tlPos = { 'Position'     : 0,
           'PictureCount' : 0
         }
 
+started = False
+
 # Display the splash screen
 def splash():
   newscreen("")
@@ -173,49 +175,53 @@ def gpioGetButtons():
 
 # Get Button or Keypresses
 def getbuttonevent():
-  while(1):
-    clock.tick( 10 );
+  clock.tick( 10 );
 
-    if gpio:
-      buttonevent = gpioGetButtons()
-      if buttonevent["type"] == pygame.KEYDOWN:
-#        print("Button {0} pressed".format(buttonevent["button"]))
-        return(buttonevent["button"])
+  if gpio:
+    buttonevent = gpioGetButtons()
+    if buttonevent["type"] == pygame.KEYDOWN:
+#      print("Button {0} pressed".format(buttonevent["button"]))
+      return(buttonevent["button"])
 #      if buttonevent["type"] == pygame.KEYUP:
-#        print("Button {0} released".format(buttonevent["button"]))
+#      print("Button {0} released".format(buttonevent["button"]))
     
-    events = pygame.event.get()
-    for event in events:
-        button=-1
-        if event.type == pygame.QUIT:
-          exit()
-        if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-          if event.type == pygame.KEYDOWN:
-            toggle=1
-          if event.type == pygame.KEYUP:
-            toggle=0
+  events = pygame.event.get()
+  for event in events:
+    button=-1
+    if event.type == pygame.QUIT:
+      exit()
+    if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+      if event.type == pygame.KEYDOWN:
+        toggle=1
+      if event.type == pygame.KEYUP:
+        toggle=0
             
-          if event.key == pygame.K_q:
-            exit()
-          if event.key == pygame.K_1:
-            button=0
-          if event.key == pygame.K_DOWN:
-            button=0
-          if event.key == pygame.K_2:
-            button=1
-          if event.key == pygame.K_UP:
-            button=1            
-          if event.key == pygame.K_3:
-            button=2
-          if event.key == pygame.K_RETURN:
-            button=2            
-          if event.key == pygame.K_4:
-            button=3
-          if event.key == pygame.K_ESCAPE:
-            button=3            
-          buttonpress(button,toggle)
-          if (toggle==1):
-            return(button)
+      if event.key == pygame.K_q:
+        exit()
+      if event.key == pygame.K_1:
+        button=0
+      if event.key == pygame.K_DOWN:
+        button=0
+      if event.key == pygame.K_2:
+        button=1
+      if event.key == pygame.K_UP:
+        button=1            
+      if event.key == pygame.K_3:
+        button=2
+      if event.key == pygame.K_RETURN:
+        button=2            
+      if event.key == pygame.K_4:
+        button=3
+      if event.key == pygame.K_ESCAPE:
+        button=3            
+      buttonpress(button,toggle)
+      if (toggle==1):
+        return(button)
+
+# Clear screen area
+def clearscreen():
+  li = pygame.Rect(0, 20, screen_rect.width, screen_rect.height-40)
+  screen.fill(wincolor, li)
 
 # Draw a select list menu
 def drawselectmenu(items,select):
@@ -268,9 +274,13 @@ def drawsettingsmenu(settings,units,select,selected):
 
 # Draw timelapse screen
 def drawtimelapseschreen():
+  global started
+  global tlPos
   font = pygame.font.SysFont('ubuntu', 22)
 
   line_height=30;
+
+  clearscreen()
 
   # Labels
   label = font.render("Position", True, (255,255,255))
@@ -294,20 +304,24 @@ def drawtimelapseschreen():
   screen.blit(label, label_rect)
   
   # Values
-  label = font.render(str(tlPos['Position'])+" / "+str(tlSet["Length"]), True, (255,255,255))
+  label = font.render(str(tlPos['Position'])+" / "+str(tlSet['Length']), True, (255,255,255))
   label_rect = label.get_rect()
   label_rect.x = 200
   label_rect.y = 10 + line_height
   screen.blit(label, label_rect)
   
-  label = font.render(str(tlPos["PictureCount"]), True, (255,255,255))
+  label = font.render(str(tlPos['PictureCount']), True, (255,255,255))
   label_rect = label.get_rect()
   label_rect = label.get_rect()
   label_rect.x = 200
   label_rect.y = 10 + line_height * 2
   screen.blit(label, label_rect)
 
-  label = font.render(str(time.time() - tlPos["Starttime"]) + " s", True, (255,255,255))
+  tc=0
+  if started==True:
+    tc = time.time() - tlPos["Starttime"]
+    
+  label = font.render("{:.1f}".format(tc) + " s", True, (255,255,255))
   label_rect = label.get_rect()
   label_rect = label.get_rect()
   label_rect.x = 200
@@ -358,7 +372,6 @@ def configScreen():
   select=0
   selected=99
   selkeys=list(tlSet.keys())
-#  print(selkeys)
 
   pygame.display.flip()
   while (1):
@@ -377,34 +390,43 @@ def configScreen():
         else:
           tlSet[selkeys[select]]+=1
     select=checkoverflow(tlSet,select)
+
     if button == 2:
       selected=select
+
     if button == 3:
       if selected==99:
         mainScreen()
       else:
         selected=99
 
-
 #TimeLapse Screen
 def timeLapseScreen():
+  global started
+  global tlPos
   newscreen("piTimeLapse - Time Lapse")
 
   btn_labels=['Start','','','↩ Exit']
   buttons(btn_labels)
 
   pygame.display.flip()
+
   while (1):
     drawtimelapseschreen()
+    print(".")
     button=getbuttonevent()
     if button == 0:
-      select=select+1
-    else:
-      if button == 1:
-        select=select-1
-    select=checkoverflow(menu,select)
-    if button == 2:
-      menu_f[select]()
+      if started==False:
+        print("Start")
+        tlPos["Starttime"]=time.time()
+        btn_labels[0]='Stop'
+        buttons(btn_labels)
+        started=True
+      else:
+        if started==True:
+          print("Stop")
+          btn_labels[0]='Start'
+          buttons(btn_labels)
     if button == 3:
       mainScreen()
 
