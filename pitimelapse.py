@@ -44,6 +44,11 @@ tlUnits = { 'Intervall' : 's',
             'Stepsize'  : 'mm',
             'Length'    : 'cm'
           }
+          
+tlPos = { 'Position'     : 0,
+          'Starttime'    : 0,
+          'PictureCount' : 0
+        }
 
 # Display the splash screen
 def splash():
@@ -261,6 +266,57 @@ def drawsettingsmenu(settings,units,select,selected):
       pygame.display.flip()
 
 
+# Draw timelapse screen
+def drawtimelapseschreen():
+  font = pygame.font.SysFont('ubuntu', 22)
+
+  line_height=30;
+
+  # Labels
+  label = font.render("Position", True, (255,255,255))
+  label_rect = label.get_rect()
+  label_rect.x = 6
+  label_rect.y = 10 + line_height
+  screen.blit(label, label_rect)
+  
+  label = font.render("Picture Count", True, (255,255,255))
+  label_rect = label.get_rect()
+  label_rect = label.get_rect()
+  label_rect.x = 6
+  label_rect.y = 10 + line_height * 2
+  screen.blit(label, label_rect)
+
+  label = font.render("Time Elapsed", True, (255,255,255))
+  label_rect = label.get_rect()
+  label_rect = label.get_rect()
+  label_rect.x = 6
+  label_rect.y = 10 + line_height * 3
+  screen.blit(label, label_rect)
+  
+  # Values
+  label = font.render(str(tlPos['Position'])+" / "+str(tlSet["Length"]), True, (255,255,255))
+  label_rect = label.get_rect()
+  label_rect.x = 200
+  label_rect.y = 10 + line_height
+  screen.blit(label, label_rect)
+  
+  label = font.render(str(tlPos["PictureCount"]), True, (255,255,255))
+  label_rect = label.get_rect()
+  label_rect = label.get_rect()
+  label_rect.x = 200
+  label_rect.y = 10 + line_height * 2
+  screen.blit(label, label_rect)
+
+  label = font.render(str(time.time() - tlPos["Starttime"]) + " s", True, (255,255,255))
+  label_rect = label.get_rect()
+  label_rect = label.get_rect()
+  label_rect.x = 200
+  label_rect.y = 10 + line_height * 3
+  
+  screen.blit(label, label_rect)  
+  pygame.display.flip()
+
+
 # Check overflow of menu selector    
 def checkoverflow(list, index):
   if (index < 0): index=len(list)-1
@@ -334,16 +390,12 @@ def configScreen():
 def timeLapseScreen():
   newscreen("piTimeLapse - Time Lapse")
 
-  btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
+  btn_labels=['Start','','','↩ Exit']
   buttons(btn_labels)
-
-  menu=["Intervall","Stepsize","Length","Save","Load"]
-  menu_f = { 0: configScreen, 1: timeLapseScreen, 2: systemScreen }
-  select=0
 
   pygame.display.flip()
   while (1):
-    drawselectmenu(menu,select)
+    drawtimelapseschreen()
     button=getbuttonevent()
     if button == 0:
       select=select+1
