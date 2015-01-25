@@ -194,12 +194,20 @@ def getbuttonevent():
             exit()
           if event.key == pygame.K_1:
             button=0
+          if event.key == pygame.K_DOWN:
+            button=0
           if event.key == pygame.K_2:
             button=1
+          if event.key == pygame.K_UP:
+            button=1            
           if event.key == pygame.K_3:
             button=2
+          if event.key == pygame.K_RETURN:
+            button=2            
           if event.key == pygame.K_4:
             button=3
+          if event.key == pygame.K_ESCAPE:
+            button=3            
           buttonpress(button,toggle)
           if (toggle==1):
             return(button)
@@ -294,7 +302,7 @@ def configScreen():
   select=0
   selected=99
   selkeys=list(tlSet.keys())
-  print(selkeys)
+#  print(selkeys)
 
   pygame.display.flip()
   while (1):
