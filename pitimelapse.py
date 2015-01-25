@@ -400,6 +400,17 @@ def configScreen():
       else:
         selected=99
 
+
+def takeImage():
+  global tlPos
+  tlPos['PictureCount']+=1
+
+def moveCamera():
+  global tlSet
+  global tlPos
+  
+  tlPos['Position']+=tlSet['Stepsize']
+
 #TimeLapse Screen
 def timeLapseScreen():
   global started
@@ -410,25 +421,32 @@ def timeLapseScreen():
   buttons(btn_labels)
 
   pygame.display.flip()
+  lastimg=0
 
   while (1):
     drawtimelapseschreen()
-    print(".")
     button=getbuttonevent()
     if button == 0:
       if started==False:
-        print("Start")
         tlPos["Starttime"]=time.time()
         btn_labels[0]='Stop'
         buttons(btn_labels)
         started=True
+        takeImage()
+        lastimg=time.time()
       else:
         if started==True:
-          print("Stop")
+          started=False
           btn_labels[0]='Start'
           buttons(btn_labels)
     if button == 3:
       mainScreen()
+
+    if started==True:
+      if lastimg+tlSet['Intervall'] <= time.time():
+        lastimg=time.time()
+        moveCamera()
+        takeImage()
 
 
 #System Screen
@@ -438,7 +456,7 @@ def systemScreen():
   btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
   buttons(btn_labels)
 
-  menu=["Intervall","Stepsize","Length","Save","Load"]
+  menu=["Load","Save","Shutdown","About"]
   menu_f = { 0: configScreen, 1: timeLapseScreen, 2: systemScreen }
   select=0
 
