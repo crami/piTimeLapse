@@ -219,9 +219,16 @@ def getbuttonevent():
         return(button)
 
 # Clear screen area
-def clearscreen():
+def clearScreen():
   li = pygame.Rect(0, 20, screen_rect.width, screen_rect.height-40)
   screen.fill(wincolor, li)
+
+
+# Clear partial screen area
+def clearTlScreen():
+  li = pygame.Rect(200, 20, screen_rect.width, screen_rect.height-40)
+  screen.fill(wincolor, li)
+
 
 # Draw a select list menu
 def drawselectmenu(items,select):
@@ -280,28 +287,31 @@ def drawtimelapseschreen():
 
   line_height=30;
 
-  clearscreen()
+  if started==False:
+    clearScreen()
 
-  # Labels
-  label = font.render("Position", True, (255,255,255))
-  label_rect = label.get_rect()
-  label_rect.x = 6
-  label_rect.y = 10 + line_height
-  screen.blit(label, label_rect)
+    # Labels
+    label = font.render("Position", True, (255,255,255))
+    label_rect = label.get_rect()
+    label_rect.x = 6
+    label_rect.y = 10 + line_height
+    screen.blit(label, label_rect)
   
-  label = font.render("Picture Count", True, (255,255,255))
-  label_rect = label.get_rect()
-  label_rect = label.get_rect()
-  label_rect.x = 6
-  label_rect.y = 10 + line_height * 2
-  screen.blit(label, label_rect)
+    label = font.render("Picture Count", True, (255,255,255))
+    label_rect = label.get_rect()
+    label_rect = label.get_rect()
+    label_rect.x = 6
+    label_rect.y = 10 + line_height * 2
+    screen.blit(label, label_rect)
 
-  label = font.render("Time Elapsed", True, (255,255,255))
-  label_rect = label.get_rect()
-  label_rect = label.get_rect()
-  label_rect.x = 6
-  label_rect.y = 10 + line_height * 3
-  screen.blit(label, label_rect)
+    label = font.render("Time Elapsed", True, (255,255,255))
+    label_rect = label.get_rect()
+    label_rect = label.get_rect()
+    label_rect.x = 6
+    label_rect.y = 10 + line_height * 3
+    screen.blit(label, label_rect)
+  else:
+    clearTlScreen()
   
   # Values
   label = font.render(str(tlPos['Position'])+" / "+str(tlSet['Length']), True, (255,255,255))
