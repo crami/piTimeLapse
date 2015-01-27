@@ -37,8 +37,11 @@ buttonStateOld = [1, 1, 1, 1]
 
 tlSet = { 'Intervall' : 10,
           'Stepsize'  : 10,
-          'Length'    : 180
+          'Length'    : 180,
+          'Direction' : 0
         }
+
+dirList = ['Left','Right']
         
 tlUnits = { 'Intervall' : 's',
             'Stepsize'  : 'mm',
@@ -195,7 +198,6 @@ def getbuttonevent():
         toggle=1
       if event.type == pygame.KEYUP:
         toggle=0
-            
       if event.key == pygame.K_q:
         exit()
       if event.key == pygame.K_1:
@@ -270,7 +272,12 @@ def drawsettingsmenu(settings,units,select,selected):
         highlight.y=((screen_rect.height/8) * i) + 40
         screen.fill(menucolor[2], highlight)
         
-      val = font.render(str(settings[key])+" "+units[key], True, (255,255,255))
+      text=""
+      if key == "Direction":
+        text=dirList[settings[key] % 2]
+      else:
+        text=str(settings[key])+" "+units[key]
+      val = font.render(text, True, (255,255,255))
       val_rect = label.get_rect()
       val_rect.center = li.center
       val_rect.x = screen_rect.width*0.7
@@ -399,6 +406,7 @@ def configScreen():
           select=select-1
         else:
           tlSet[selkeys[select]]+=1
+    
     select=checkoverflow(tlSet,select)
 
     if button == 2:
