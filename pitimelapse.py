@@ -64,7 +64,7 @@ def splash():
   label_rect = label.get_rect()
   label_rect.center = screen_rect.center
 
-  """Blit image and text to the target surface."""
+  # Blit image and text to the target surface.
   screen.blit(label, label_rect)
   pygame.display.flip()
   time.sleep(1)
