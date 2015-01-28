@@ -28,6 +28,10 @@ menucolor = [[50,50,100],[255,50,50],[200,75,75]]
 
 # Raspberry PI revision (GPIO has changed between 1 and 2)
 if gpio:
+  endStopLeft = 12
+  endStopRight = 13
+  camFocus=16
+  camShutter=19
   if GPIO.RPI_REVISION == 1:
     buttonPins = [17, 22, 23, 21]
   else:
