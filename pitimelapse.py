@@ -61,7 +61,7 @@ started = False
 
 # Display the splash screen
 def splash():
-  newscreen("")
+  newScreen("")
   font = pygame.font.SysFont('matthiascramerhandwriting', 24)
   message = "Welcome to piTime"
   label = font.render(message, True, (255,255,255))
@@ -81,7 +81,7 @@ def butondemo():
     buttonpress(i,0)
 
 # Prepare a new screen
-def newscreen(title):
+def newScreen(title):
   screen.fill(wincolor)
   if (title != ""):
     header = pygame.Rect(0, 0, screen_rect.width, 20)
@@ -109,7 +109,7 @@ def buttons(labels):
     screen.blit(label, label_rect)
     
 # Mark a pressed button
-def buttonpress(num,toggle):
+def buttonPress(num,toggle):
   width=(screen_rect.width/4)-6
   height=20
   x=3+((screen_rect.width/4)*num)
@@ -123,7 +123,7 @@ def buttonpress(num,toggle):
   pygame.display.flip()
 
 # Framebuffer init
-def fbinit():
+def fbInit():
   disp_no = os.getenv("DISPLAY")
   if disp_no:
     print("I'm running under X display = {0}".format(disp_no))
@@ -156,6 +156,12 @@ def fbinit():
 def gpioInit():
   GPIO.setmode(GPIO.BCM)
   GPIO.setwarnings(False)
+  
+  GPIO.setup(endStopLeft, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+  GPIO.setup(endStopRight, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+  GPIO.setup(camFocus, GPIO.OUT, initial=GPIO.LOW)
+  GPIO.setup(camShutter, GPIO.OUT, initial=GPIO.LOW)
+  
   for i in buttonPins:
     GPIO.setup(i, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     print("GPIO {0} init".format(i))
@@ -175,13 +181,17 @@ def gpioGetButtons():
       if (buttonState[i] == 1):  
         buttonevent["type"]=pygame.KEYUP
       buttonevent["button"]=i
-      buttonpress(i,not buttonState[i])
+      buttonPress(i,not buttonState[i])
   buttonStateOld = buttonState[:]
   return(buttonevent)
 
 
+def endProgram():
+  GPIO.cleanup()
+  exit()
+
 # Get Button or Keypresses
-def getbuttonevent():
+def getButtonEvent():
   clock.tick( 10 );
 
   if gpio:
@@ -196,7 +206,7 @@ def getbuttonevent():
   for event in events:
     button=-1
     if event.type == pygame.QUIT:
-      exit()
+      endProgram()
     if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
       if event.type == pygame.KEYDOWN:
         toggle=1
@@ -220,7 +230,7 @@ def getbuttonevent():
         button=3
       if event.key == pygame.K_ESCAPE:
         button=3            
-      buttonpress(button,toggle)
+      buttonPress(button,toggle)
       if (toggle==1):
         return(button)
 
@@ -237,7 +247,7 @@ def clearTlScreen():
 
 
 # Draw a select list menu
-def drawselectmenu(items,select):
+def drawSelectMenu(items,select):
   li = pygame.Rect(0, 0, screen_rect.width*0.8 , 24)
   font = pygame.font.SysFont('ubuntu', 18)
 
@@ -255,7 +265,7 @@ def drawselectmenu(items,select):
 
 
 # Draw a settings menu
-def drawsettingsmenu(settings,units,select,selected):
+def drawSettingsMenu(settings,units,select,selected):
   li = pygame.Rect(0, 0, screen_rect.width*0.8 , 24)
   font = pygame.font.SysFont('ubuntu', 18)
   i = 0
@@ -291,7 +301,7 @@ def drawsettingsmenu(settings,units,select,selected):
 
 
 # Draw timelapse screen
-def drawtimelapseschreen():
+def drawTimeLapseScreen():
   global started
   global tlPos
   font = pygame.font.SysFont('ubuntu', 22)
@@ -353,14 +363,14 @@ def drawtimelapseschreen():
 
 
 # Check overflow of menu selector    
-def checkoverflow(list, index):
+def checkOverflow(list, index):
   if (index < 0): index=len(list)-1
   if (index >= len(list)): index=0
   return(index)
 
 # Main Screen
 def mainScreen():
-  newscreen("piTimeLapse")
+  newScreen("piTimeLapse")
 
   btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
   buttons(btn_labels)
@@ -371,21 +381,21 @@ def mainScreen():
 
   pygame.display.flip()
   while (1):
-    drawselectmenu(menu,select)
-    button=getbuttonevent()
+    drawSelectMenu(menu,select)
+    button=getButtonEvent()
     if button == 0:
       select=select+1
     else:
       if button == 1:
         select=select-1
-    select=checkoverflow(menu,select)
+    select=checkOverflow(menu,select)
     if button == 2:
       menu_f[select]()
       
       
 #Config Screen
 def configScreen():
-  newscreen("piTimeLapse - Config")
+  newScreen("piTimeLapse - Config")
 
   btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
   buttons(btn_labels)
@@ -396,8 +406,8 @@ def configScreen():
 
   pygame.display.flip()
   while (1):
-    drawsettingsmenu(tlSet,tlUnits,select,selected)
-    button=getbuttonevent()
+    drawSettingsMenu(tlSet,tlUnits,select,selected)
+    button=getButtonEvent()
 
     if button == 0:
       if selected==99:
@@ -411,7 +421,7 @@ def configScreen():
         else:
           tlSet[selkeys[select]]+=1
     
-    select=checkoverflow(tlSet,select)
+    select=checkOverflow(tlSet,select)
 
     if button == 2:
       selected=select
@@ -437,7 +447,7 @@ def moveCamera():
 def timeLapseScreen():
   global started
   global tlPos
-  newscreen("piTimeLapse - Time Lapse")
+  newScreen("piTimeLapse - Time Lapse")
 
   btn_labels=['Start','','','↩ Exit']
   buttons(btn_labels)
@@ -446,8 +456,8 @@ def timeLapseScreen():
   lastimg=0
 
   while (1):
-    drawtimelapseschreen()
-    button=getbuttonevent()
+    drawTimeLapseScreen()
+    button=getButtonEvent()
     if button == 0:
       if started==False:
         tlPos["Starttime"]=time.time()
@@ -473,7 +483,7 @@ def timeLapseScreen():
 
 #System Screen
 def systemScreen():
-  newscreen("piTimeLapse - System")
+  newScreen("piTimeLapse - System")
 
   btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
   buttons(btn_labels)
@@ -484,14 +494,14 @@ def systemScreen():
 
   pygame.display.flip()
   while (1):
-    drawselectmenu(menu,select)
-    button=getbuttonevent()
+    drawSelectMenu(menu,select)
+    button=getButtonEvent()
     if button == 0:
       select=select+1
     else:
       if button == 1:
         select=select-1
-    select=checkoverflow(menu,select)
+    select=checkOverflow(menu,select)
     if button == 2:
       menu_f[select]()
     if button == 3:
@@ -502,7 +512,7 @@ def systemScreen():
 """ Main """
 
 pygame.init()
-screen=fbinit()
+screen=fbInit()
 screen_rect = screen.get_rect()
 pygame.mouse.set_visible(False)
 pygame.display.set_caption('piTime')
