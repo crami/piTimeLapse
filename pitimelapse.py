@@ -8,6 +8,7 @@ import sys
 import pygame
 import time
 import socket
+from subprocess import call
 from pygame.locals import *
 from pygame.compat import unichr_, unicode_
 try:
@@ -494,36 +495,46 @@ def getDefaultIP():
 
 
 def infoScreen():
-   newScreen("piTimeLapse - Info")
+  newScreen("piTimeLapse - Info")
    
-   btn_labels=['','','','↩ Exit']
-   buttons(btn_labels)
+  btn_labels=['','','','↩ Exit']
+  buttons(btn_labels)
        
-   font = pygame.font.SysFont('ubuntu', 18)
+  font = pygame.font.SysFont('ubuntu', 18)
 
-   label = font.render("IP Address: "+getDefaultIP(), True, (255,255,255))
-   label_rect = label.get_rect()
-   label_rect.center = [160,120]
-   screen.blit(label, label_rect)
+  label = font.render("IP Address: "+getDefaultIP(), True, (255,255,255))
+  label_rect = label.get_rect()
+  label_rect.center = [160,120]
+  screen.blit(label, label_rect)
                      
-   pygame.display.flip()
-   while (1):
-     button=getButtonEvent()
-     if button == 3:
-       systemScreen()
+  pygame.display.flip()
+  while (1):
+    button=getButtonEvent()
+    if button == 3:
+      systemScreen()
                                                                              
-
 def shutdownScreen():
   newScreen("piTimeLapse - Shutdown")
 
   btn_labels=['','Shutdown','','↩ Exit']
   buttons(btn_labels)
 
+  font = pygame.font.SysFont('ubuntu', 18)
+
+  label = font.render("Confirm Shutdown", True, (255,255,255))
+  label_rect = label.get_rect()
+  label_rect.center = [160,120]
+  screen.blit(label, label_rect)
+                     
   pygame.display.flip()
   while (1):
     button=getButtonEvent()
     if button == 1:
       print("Shutdown")
+      if os.getuid()==0:
+        call(["shutdown", "-h", "now"])
+      else:
+        print("Not running as root!")
     if button == 3:
       systemScreen()
 
