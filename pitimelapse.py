@@ -7,6 +7,7 @@ import os
 import sys
 import pygame
 import time
+import socket
 from pygame.locals import *
 from pygame.compat import unichr_, unicode_
 try:
@@ -484,6 +485,48 @@ def timeLapseScreen():
         takeImage()
 
 
+def getDefaultIP():
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  s.connect(('8.8.8.8', 0))  # connecting to a UDP address doesn't send packets
+  local_ip_address = s.getsockname()[0]
+
+  return(local_ip_address)
+
+
+def infoScreen():
+   newScreen("piTimeLapse - Info")
+   
+   btn_labels=['','','','↩ Exit']
+   buttons(btn_labels)
+       
+   font = pygame.font.SysFont('ubuntu', 18)
+
+   label = font.render("IP Address: "+getDefaultIP(), True, (255,255,255))
+   label_rect = label.get_rect()
+   label_rect.center = [160,120]
+   screen.blit(label, label_rect)
+                     
+   pygame.display.flip()
+   while (1):
+     button=getButtonEvent()
+     if button == 3:
+       systemScreen()
+                                                                             
+
+def shutdownScreen():
+  newScreen("piTimeLapse - Shutdown")
+
+  btn_labels=['','Shutdown','','↩ Exit']
+  buttons(btn_labels)
+
+  pygame.display.flip()
+  while (1):
+    button=getButtonEvent()
+    if button == 1:
+      print("Shutdown")
+    if button == 3:
+      systemScreen()
+
 #System Screen
 def systemScreen():
   newScreen("piTimeLapse - System")
@@ -491,8 +534,8 @@ def systemScreen():
   btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
   buttons(btn_labels)
 
-  menu=["Load","Save","Shutdown","About"]
-  menu_f = { 0: configScreen, 1: timeLapseScreen, 2: systemScreen }
+  menu=["Info","Shutdown"]
+  menu_f = { 0: infoScreen, 1: shutdownScreen }
   select=0
 
   pygame.display.flip()
