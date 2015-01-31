@@ -301,14 +301,14 @@ def drawSettingsMenu(settings,units,select,selected):
 
 
 # Draw timelapse screen
-def drawTimeLapseScreen():
+def drawTimeLapseScreen(first):
   global started
   global tlPos
   font = pygame.font.SysFont('ubuntu', 22)
 
   line_height=30;
 
-  if started==False:
+  if first==True:
     clearScreen()
 
     # Labels
@@ -454,9 +454,11 @@ def timeLapseScreen():
 
   pygame.display.flip()
   lastimg=0
+  first=True
 
   while (1):
-    drawTimeLapseScreen()
+    drawTimeLapseScreen(first)
+    first=False
     button=getButtonEvent()
     if button == 0:
       if started==False:
@@ -472,6 +474,7 @@ def timeLapseScreen():
           btn_labels[0]='Start'
           buttons(btn_labels)
     if button == 3:
+      first=True
       mainScreen()
 
     if started==True:
