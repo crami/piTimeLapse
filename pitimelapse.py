@@ -532,6 +532,7 @@ def shutdownScreen():
     if button == 1:
       print("Shutdown")
       if os.getuid()==0:
+        pygame.display.quit()
         call(["shutdown", "-h", "now"])
       else:
         print("Not running as root!")
