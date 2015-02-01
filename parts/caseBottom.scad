@@ -19,9 +19,9 @@ difference(){
     translate([0,65-2,0]) cube([71,2,height]);
     translate([71-2,0,0]) cube([2,65,height]);
   }
-  translate([71-5,24,-0.5]) cube([10,16,10]); // Micro SD
-  translate([-1,17,6]) cube([4,15,10]); // USB
-  translate([71-5-12,65-3,4]) cube([12,8,5.5]); // Power
+  translate([71-5,25,-0.5]) cube([10,16,10]); // Micro SD
+  translate([-1,19,6]) cube([4,16,10]); // USB
+  translate([71-8-12,65-3,4]) cube([12,8,5.5]); // Power
 }
 
 translate([6.5,6.5,0]) post();
