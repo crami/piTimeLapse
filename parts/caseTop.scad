@@ -1,5 +1,5 @@
 
-height=23;
+height=16;
 
 $fn=32;
 
@@ -17,12 +17,12 @@ difference(){
     cube([2,65,height]);
     translate([0,65-2,0]) cube([71,2,height]);
     translate([71-2,0,0]) cube([2,65,height]);
-    translate([0,23,22]) cube([2,16,3]); // Micro SD
+    translate([0,23,15]) cube([2,16,3]); // Micro SD
   }
 
-  translate([68,19.5,17]) cube([4,16,10]); // USB
-  translate([8,65-3,20]) cube([12,8,5.5]); // Power
-  translate([11,12,-1]) cube([55,40,4]); // LCD
+  translate([68,19.5,10]) cube([4,16,10]); // USB
+  translate([8,65-3,13]) cube([12,8,5.5]); // Power
+  translate([12,14,-1]) cube([49,36,4]); // LCD
 
   translate([17,56,-1]) cylinder(4,3,3);
   translate([17+13,56,-1]) cylinder(4,3,3);
