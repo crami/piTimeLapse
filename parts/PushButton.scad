@@ -2,8 +2,8 @@
 module button() {
   $fn=32;
   union() {
-    translate([0,0,0]) cylinder(1,3.2,3.2);
-    translate([0,0,0.9]) cylinder(4.8,2.5,2.5);
+    translate([0,0,0]) cylinder(0.8,3.2,3.2);
+    translate([0,0,0.7]) cylinder(4.5,2.5,2.5);
   }
 }
 
