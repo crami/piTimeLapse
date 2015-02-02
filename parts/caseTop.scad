@@ -19,7 +19,8 @@ difference(){
     translate([71-2,0,0]) cube([2,65,height]);
     translate([0,23,15]) cube([2,16,3]); // Micro SD
   }
-
+  translate([21,9,0.5]) rotate([180,0,0]) scale(0.013) import("piTimeLapse.stl");
+ 
   translate([68,19.5,10]) cube([4,16,10]); // USB
   translate([8,65-3,13]) cube([12,8,5.5]); // Power
   translate([12,14,-1]) cube([49,36,4]); // LCD
