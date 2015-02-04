@@ -34,8 +34,12 @@ if gpio:
   endStopRight = 13
   camFocus=16
   camShutter=19
+  motorPulse=20
+  motorDir=21
   if GPIO.RPI_REVISION == 1:
-    buttonPins = [17, 22, 23, 21]
+#    buttonPins = [17, 22, 23, 21]
+    print("This does not work on a revison 1 board, sorry!")
+    exit()
   else:
     buttonPins = [17, 22, 23, 27]
 
@@ -163,6 +167,8 @@ def gpioInit():
   GPIO.setup(endStopRight, GPIO.IN, pull_up_down=GPIO.PUD_UP)
   GPIO.setup(camFocus, GPIO.OUT, initial=GPIO.LOW)
   GPIO.setup(camShutter, GPIO.OUT, initial=GPIO.LOW)
+  GPIO.setup(motorPulse, GPIO.OUT, initial=GPIO.LOW)
+  GPIO.setup(motorDir, GPIO.OUT, initial=GPIO.LOW)
   
   for i in buttonPins:
     GPIO.setup(i, GPIO.IN, pull_up_down=GPIO.PUD_UP)
