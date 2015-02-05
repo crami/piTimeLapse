@@ -445,9 +445,10 @@ def takeImage():
   global tlPos
   tlPos['PictureCount']+=1
 
-def cbEndStopEvent(dir):
-  value=GPIO.input(endStop[dir]);
-  print("{0} Endstop has changed to {1}".format(dir,value))
+def cbEndStopEvent(pin):
+  lookup = {value: key for key, value in endStop.items()}
+  value=GPIO.input(pin);
+  print("{0} Endstop has changed to {1}".format(lookup[pin],value))
 
 def checkEndStop():
   global endStop
