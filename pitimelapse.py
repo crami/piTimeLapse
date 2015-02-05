@@ -453,7 +453,7 @@ def checkEndStop():
   global endStop
   for i in endStop:
     GPIO.add_event_detect(endStop[i], GPIO.BOTH)
-    GPIO.add_event_callback(endStop[i], cbEndStopEvent(i))
+    GPIO.add_event_callback(endStop[i], callback=cbEndStopEvent)
 
   
 def removeCheckEndStop():
