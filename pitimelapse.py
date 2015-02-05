@@ -30,8 +30,8 @@ menucolor = [[50,50,100],[255,50,50],[200,75,75]]
 
 # Raspberry PI revision (GPIO has changed between 1 and 2)
 if gpio:
-  endStopLeft = 12
-  endStopRight = 13
+
+  endStop = { 'Left': 12, 'Right': 13}
   camFocus=16
   camShutter=19
   motorPulse=20
@@ -163,8 +163,8 @@ def gpioInit():
   GPIO.setmode(GPIO.BCM)
   GPIO.setwarnings(False)
   
-  GPIO.setup(endStopLeft, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-  GPIO.setup(endStopRight, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+  GPIO.setup(endStop['Left'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
+  GPIO.setup(endStop['Right'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
   GPIO.setup(camFocus, GPIO.OUT, initial=GPIO.LOW)
   GPIO.setup(camShutter, GPIO.OUT, initial=GPIO.LOW)
   GPIO.setup(motorPulse, GPIO.OUT, initial=GPIO.LOW)
@@ -445,6 +445,22 @@ def takeImage():
   global tlPos
   tlPos['PictureCount']+=1
 
+def cbEndStopEvent(dir):
+  value=GPIO.input(endStop[dir]);
+  print("{0} Endstop has changed to {1}".format(dir,value))
+
+def checkEndStop():
+  global endStop
+  for i in endStop:
+    GPIO.add_event_detect(endStop[i], GPIO.BOTH)
+    GPIO.add_event_callback(endStop[i], cbEndStopEvent(i))
+
+  
+def removeCheckEndStop():
+  global endStop
+  for i in endStop:
+    GPIO.remove_event_detect(i)
+
 def moveCamera():
   global tlSet
   global tlPos
@@ -476,11 +492,15 @@ def timeLapseScreen():
         started=True
         takeImage()
         lastimg=time.time()
+        if gpio:
+          checkEndStop()
       else:
         if started==True:
           started=False
           btn_labels[0]='Start'
           buttons(btn_labels)
+          if gpio:
+            removeCheckEndStop()
     if button == 3:
       first=True
       mainScreen()
