@@ -452,7 +452,7 @@ def takeImage():
     GPIO.output(camShutter,0)
     GPIO.output(camFocus,0)
   else:
-    print "Chees"
+    print("Cheese")
   tlPos['PictureCount']+=1
 
 # CallBack for Endstop
