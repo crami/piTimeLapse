@@ -30,7 +30,6 @@ menucolor = [[50,50,100],[255,50,50],[200,75,75]]
 
 # Raspberry PI revision (GPIO has changed between 1 and 2)
 if gpio:
-
   endStop = { 'Left': 12, 'Right': 13}
   camFocus=16
   camShutter=19
@@ -64,6 +63,7 @@ tlPos = { 'Position'     : 0,
         }
 
 started = False
+posInc=0.01
 
 # Display the splash screen
 def splash():
@@ -194,6 +194,7 @@ def gpioGetButtons():
   return(buttonevent)
 
 
+# End Program
 def endProgram():
   GPIO.cleanup()
   exit()
@@ -440,28 +441,40 @@ def configScreen():
       else:
         selected=99
 
-
+# Take an Image
 def takeImage():
   global tlPos
+  if gpio:
+    GPIO.output(camFocus,1)
+    time.sleep(0.2)
+    GPIO.output(camShutter,1)
+    time.sleep(0.1)
+    GPIO.output(camShutter,0)
+    GPIO.output(camFocus,0)
+  else:
+    print "Chees"
   tlPos['PictureCount']+=1
 
+# CallBack for Endstop
 def cbEndStopEvent(pin):
   lookup = {value: key for key, value in endStop.items()}
   value=GPIO.input(pin);
   print("{0} Endstop has changed to {1}".format(lookup[pin],value))
 
+# Register event for endstop detection
 def checkEndStop():
   global endStop
   for i in endStop:
     GPIO.add_event_detect(endStop[i], GPIO.BOTH)
     GPIO.add_event_callback(endStop[i], callback=cbEndStopEvent)
 
-  
+# Remove endstop events
 def removeCheckEndStop():
   global endStop
   for i in endStop:
     GPIO.remove_event_detect(endStop[i])
 
+# Move the camera on the rail
 def moveCamera():
   global tlSet
   global tlPos
@@ -512,7 +525,7 @@ def timeLapseScreen():
         moveCamera()
         takeImage()
 
-
+# Get default IP address
 def getDefaultIP():
   s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
   s.connect(('8.8.8.8', 0))  # connecting to a UDP address doesn't send packets
@@ -521,6 +534,7 @@ def getDefaultIP():
   return(local_ip_address)
 
 
+# The info screen
 def infoScreen():
   newScreen("piTimeLapse - Info")
    
@@ -539,7 +553,8 @@ def infoScreen():
     button=getButtonEvent()
     if button == 3:
       systemScreen()
-                                                                             
+              
+# The shutdown screen                                                                            
 def shutdownScreen():
   newScreen("piTimeLapse - Shutdown")
 
