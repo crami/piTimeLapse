@@ -5,7 +5,7 @@ $fn=32;
 // specifies whether the screw is millimeters or inches; value of 1 for millimeters, value of 25.4 for inches
 conversion = 25.4; // [1,25.4]
 // the major diameter of the screw
-diameter_major = 0.25;
+diameter_major = 0.3;
 // the pitch of the screw attachment
 pitch = 0.05;
 // integer multiplies the smoothness of the screw; suggested smoothness no greater than 5
