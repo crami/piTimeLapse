@@ -448,7 +448,7 @@ def takeImage():
     GPIO.output(camFocus,1)
     time.sleep(0.2)
     GPIO.output(camShutter,1)
-    time.sleep(0.1)
+    time.sleep(0.2)
     GPIO.output(camShutter,0)
     GPIO.output(camFocus,0)
   else:
