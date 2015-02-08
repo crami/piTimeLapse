@@ -446,7 +446,7 @@ def takeImage():
   global tlPos
   if gpio:
     GPIO.output(camFocus,1)
-    time.sleep(0.2)
+    time.sleep(0.3)
     GPIO.output(camShutter,1)
     time.sleep(0.2)
     GPIO.output(camShutter,0)
