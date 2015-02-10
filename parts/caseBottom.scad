@@ -22,6 +22,9 @@ difference(){
   translate([71-8,23-0.2,-0.5]) cube([10,16.4,10]); // Micro SD
   translate([-1,19.5,6]) cube([4,16,10]); // USB
   translate([71-8-12,65-3,4]) cube([12,8,5.5]); // Power
+  translate([68,12,7]) cube([4,6,4]); // Camera Jack
+  translate([-1,7,7.5]) cube([4,10,2]); // Ribbon Cable
+
 }
 
 translate([6.5,6.5,0]) post();
