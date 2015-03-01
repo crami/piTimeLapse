@@ -54,6 +54,10 @@ tlSet = { 'Intervall' : 10,
         }
 
 dirList = ['Left','Right']
+
+esState = { 'Left' : 1,
+            'Right': 1
+          }
         
 tlUnits = { 'Intervall' : 's',
             'Stepsize'  : 'mm',
@@ -461,8 +465,12 @@ def takeImage():
 
 # CallBack for Endstop
 def cbEndStopEvent(pin):
+  global esState
+  
   lookup = {value: key for key, value in endStop.items()}
   value=GPIO.input(pin);
+  esState[lookup[pin]]=value;
+  
   print("{0} Endstop has changed to {1}".format(lookup[pin],value))
 
 # Register event for endstop detection
@@ -493,12 +501,21 @@ def moveCamera():
   
   posold=tlPos['Position']
   tlPos['Position']+=tlSet['Stepsize']
+  
+  if (tlSet["Direction"] == 1):
+    GPIO.output(motorDir,1)
+  else:
+    GPIO.output(motorDir,0)
+  
   while(tlPos['Position']>=posold):
-    GPIO.output(motorPulse,1)
-    time.sleep(0.005)
-    GPIO.output(motorPulse,0)
-    time.sleep(0.005)
-    posold=posold+movesize
+    if (esState[dirList[tlSet["Direction"]]] == 1):
+      GPIO.output(motorPulse,1)
+      time.sleep(0.005)
+      GPIO.output(motorPulse,0)
+      time.sleep(0.005)
+      posold=posold+movesize
+    else:
+      print("Endstop Error!")
   
 
 #TimeLapse Screen
