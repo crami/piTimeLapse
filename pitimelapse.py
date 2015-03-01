@@ -172,6 +172,7 @@ def gpioInit():
   GPIO.setup(camShutter, GPIO.OUT, initial=GPIO.LOW)
   GPIO.setup(motorPulse, GPIO.OUT, initial=GPIO.LOW)
   GPIO.setup(motorDir, GPIO.OUT, initial=GPIO.LOW)
+  GPIO.setup(motorEna, GPIO.OUT, initial=GPIO.LOW)
   
   for i in buttonPins:
     GPIO.setup(i, GPIO.IN, pull_up_down=GPIO.PUD_UP)
