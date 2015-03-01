@@ -43,7 +43,7 @@ if gpio:
   else:
     buttonPins = [17, 22, 23, 27]
 
-movesize=1
+movesize=0.2
 
 buttonStateOld = [1, 1, 1, 1]
 
@@ -495,8 +495,9 @@ def moveCamera():
   tlPos['Position']+=tlSet['Stepsize']
   while(tlPos['Position']>=posold):
     GPIO.output(motorPulse,1)
-    time.sleep(0.1)
+    time.sleep(0.01)
     GPIO.output(motorPulse,0)
+    time.sleep(0.01)
     posold=posold+movesize
   
 
