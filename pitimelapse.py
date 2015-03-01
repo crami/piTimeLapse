@@ -499,6 +499,7 @@ def moveCamera():
     GPIO.output(motorPulse,0)
     time.sleep(0.01)
     posold=posold+movesize
+    print("Pos:" + posold)
   
 
 #TimeLapse Screen
