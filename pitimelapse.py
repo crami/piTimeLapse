@@ -35,6 +35,7 @@ if gpio:
   camShutter=19
   motorPulse=20
   motorDir=21
+  motorEna=6
   if GPIO.RPI_REVISION == 1:
 #    buttonPins = [17, 22, 23, 21]
     print("This does not work on a revison 1 board, sorry!")
@@ -476,6 +477,14 @@ def removeCheckEndStop():
   for i in endStop:
     GPIO.remove_event_detect(endStop[i])
 
+# Enable Stepper Motor
+def motorEnable():
+  GPIO.output(motorEna,1)
+
+# Disapble Stepper Motor
+def motorDisable():
+  GPIO.output(motorEna,0)
+
 # Move the camera on the rail
 def moveCamera():
   global tlSet
@@ -513,6 +522,7 @@ def timeLapseScreen():
         btn_labels[0]='Stop'
         buttons(btn_labels)
         started=True
+        motorEnable();
         takeImage()
         lastimg=time.time()
         if gpio:
@@ -522,6 +532,7 @@ def timeLapseScreen():
           started=False
           btn_labels[0]='Start'
           buttons(btn_labels)
+          motorDisable();
           if gpio:
             removeCheckEndStop()
     if button == 3:
