@@ -42,6 +42,8 @@ if gpio:
   else:
     buttonPins = [17, 22, 23, 27]
 
+movesize=1
+
 buttonStateOld = [1, 1, 1, 1]
 
 tlSet = { 'Intervall' : 10,
@@ -479,7 +481,14 @@ def moveCamera():
   global tlSet
   global tlPos
   
+  posold=tlPos['Position']
   tlPos['Position']+=tlSet['Stepsize']
+  while(tlPos['Position']>=posold) {
+    GPIO.output(motorPulse,1)
+    time.sleep(0.1)
+    GPIO.output(motorPulse,0)
+    posold=posold+movesize
+  }
 
 #TimeLapse Screen
 def timeLapseScreen():
