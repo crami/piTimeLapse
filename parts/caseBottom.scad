@@ -5,11 +5,18 @@ $fn=32;
 
 module post(){
   difference() {
-    cylinder(5,3,3);
+    translate([0,0,2]) cylinder(3,3,3);
     translate([0,0,-0.5]) cylinder(6,1.4,1.4);
   }
 }
 
+module cone() {
+  union(){
+    translate([0,0,-0.599]) cylinder(1,2.2,2.2);
+    translate([0,0,0.4]) cylinder(2,2.2,0);
+    translate([0,0,0]) cylinder(3,1.4,1.4);
+  }
+}
 
 difference(){
   union(){
@@ -25,9 +32,16 @@ difference(){
   translate([68,12,7]) cube([4,6,4]); // Camera Jack
   translate([-1,7,7.5]) cube([4,10,2]); // Ribbon Cable
 
+  translate([6.5,6.5,0]) cone();
+  translate([6.5,65-6.5-3,0]) cone();
+  translate([71-6.5,6.5,0]) cone();
+  translate([71-6.5,65-6.5-3,0]) cone();
+
+
 }
 
 translate([6.5,6.5,0]) post();
 translate([6.5,65-6.5-3,0]) post();
 translate([71-6.5,6.5,0]) post();
 translate([71-6.5,65-6.5-3,0]) post();
+
