@@ -492,12 +492,12 @@ def moveCamera():
   
   posold=tlPos['Position']
   tlPos['Position']+=tlSet['Stepsize']
-  while(tlPos['Position']>=posold) {
+  while(tlPos['Position']>=posold):
     GPIO.output(motorPulse,1)
     time.sleep(0.1)
     GPIO.output(motorPulse,0)
     posold=posold+movesize
-  }
+  
 
 #TimeLapse Screen
 def timeLapseScreen():
