@@ -348,6 +348,14 @@ def drawTimeLapseScreen(first):
     label_rect.x = 6
     label_rect.y = 10 + line_height * 3
     screen.blit(label, label_rect)
+    
+    label = font.render("Direction", True, (255,255,255))
+    label_rect = label.get_rect()
+    label_rect = label.get_rect()
+    label_rect.x = 6
+    label_rect.y = 10 + line_height * 4
+    screen.blit(label, label_rect)
+    
   else:
     clearTlScreen()
   
@@ -370,6 +378,12 @@ def drawTimeLapseScreen(first):
     tc = time.time() - tlPos["Starttime"]
     
   label = font.render("{:.1f}".format(tc) + " s", True, (255,255,255))
+  label_rect = label.get_rect()
+  label_rect = label.get_rect()
+  label_rect.x = 200
+  label_rect.y = 10 + line_height * 3
+  
+  label = font.render(dirList[tlSet[Direction]], True, (255,255,255))
   label_rect = label.get_rect()
   label_rect = label.get_rect()
   label_rect.x = 200
