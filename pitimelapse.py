@@ -172,7 +172,7 @@ def gpioInit():
   GPIO.setup(camShutter, GPIO.OUT, initial=GPIO.LOW)
   GPIO.setup(motorPulse, GPIO.OUT, initial=GPIO.LOW)
   GPIO.setup(motorDir, GPIO.OUT, initial=GPIO.LOW)
-  GPIO.setup(motorEna, GPIO.OUT, initial=GPIO.LOW)
+  GPIO.setup(motorEna, GPIO.OUT, initial=GPIO.HIGH)
   
   for i in buttonPins:
     GPIO.setup(i, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -480,11 +480,11 @@ def removeCheckEndStop():
 
 # Enable Stepper Motor
 def motorEnable():
-  GPIO.output(motorEna,1)
+  GPIO.output(motorEna,0)
 
 # Disapble Stepper Motor
 def motorDisable():
-  GPIO.output(motorEna,0)
+  GPIO.output(motorEna,1)
 
 # Move the camera on the rail
 def moveCamera():
