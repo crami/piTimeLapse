@@ -597,6 +597,7 @@ def timeLapseScreen():
       btn_labels[1]=''
       buttons(btn_labels)
       rewind()
+      tlPos["PictureCount"]=0
       if gpio:
         motorDisable();
         removeCheckEndStop()
