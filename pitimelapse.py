@@ -524,14 +524,14 @@ def moveCamera():
     else:
       GPIO.output(motorDir,0)
   
-    while(tlPos['Position']>=posold && esState[dirList[tlSet["Direction"]]] == 1):
+    while(tlPos['Position']>=posold and esState[dirList[tlSet["Direction"]]] == 0):
       GPIO.output(motorPulse,1)
       time.sleep(0.005)
       GPIO.output(motorPulse,0)
       time.sleep(0.005)
       posold=posold+movesize
       
-    if (esState[dirList[tlSet["Direction"]]] == 0):
+    if (esState[dirList[tlSet["Direction"]]] == 1):
       print("Endstop reached!")
         
 
@@ -545,7 +545,7 @@ def rewind():
     else:
       GPIO.output(motorDir,1)
     
-    while (esState[dirList[not tlSet["Direction"]]] == 1):
+    while (esState[dirList[not tlSet["Direction"]]] == 0):
       GPIO.output(motorPulse,1)
       time.sleep(0.005)
       GPIO.output(motorPulse,0)
