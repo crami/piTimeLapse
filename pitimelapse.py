@@ -513,6 +513,7 @@ def motorDisable():
 def moveCamera():
   global tlSet
   global tlPos
+  global esState
   
   posold=tlPos['Position']
   tlPos['Position']+=tlSet['Stepsize']
@@ -523,15 +524,16 @@ def moveCamera():
     else:
       GPIO.output(motorDir,0)
   
-    while(tlPos['Position']>=posold):
-      if (esState[dirList[tlSet["Direction"]]] == 1):
-        GPIO.output(motorPulse,1)
-        time.sleep(0.005)
-        GPIO.output(motorPulse,0)
-        time.sleep(0.005)
-        posold=posold+movesize
-      else:
-        print("Endstop Error!")
+    while(tlPos['Position']>=posold && esState[dirList[tlSet["Direction"]]] == 1):
+      GPIO.output(motorPulse,1)
+      time.sleep(0.005)
+      GPIO.output(motorPulse,0)
+      time.sleep(0.005)
+      posold=posold+movesize
+      
+    if (esState[dirList[tlSet["Direction"]]] == 0):
+      print("Endstop reached!")
+        
 
 def rewind():
   global tlSet
