@@ -514,6 +514,7 @@ def moveCamera():
   global tlSet
   global tlPos
   global esState
+  global started
   
   posold=tlPos['Position']
   tlPos['Position']+=tlSet['Stepsize']
@@ -533,7 +534,12 @@ def moveCamera():
       
     if (esState[dirList[tlSet["Direction"]]] == 1):
       print("Endstop reached!")
-        
+      started=False
+      btn_labels=['Start','','','↩ Exit']
+      buttons(btn_labels)
+      if gpio:
+        motorDisable();
+        removeCheckEndStop()
 
 def rewind():
   global tlSet
