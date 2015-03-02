@@ -17,6 +17,6 @@ difference() {
     
     translate([x+w,0,0]) cube([w,y+2*w,h+w]);
   }
-  translate([3,-0.5,8]) cube([15,3,13]);
+  translate([4,-0.5,8]) cube([14,3,13]);
   translate([x+w-0.5,20+w,2]) cube([3,7,17]);
 }

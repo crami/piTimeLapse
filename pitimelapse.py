@@ -531,7 +531,24 @@ def moveCamera():
       posold=posold+movesize
     else:
       print("Endstop Error!")
-  
+
+def rewind():
+  global tlSet
+  global tlPos
+  print("Rewinding")
+  if (tlSet["Direction"] == 1):
+    GPIO.output(motorDir,0)
+  else:
+    GPIO.output(motorDir,1)
+    
+  while (esState[dirList[not tlSet["Direction"]]] == 1):
+    GPIO.output(motorPulse,1)
+    time.sleep(0.005)
+    GPIO.output(motorPulse,0)
+    time.sleep(0.005)
+    
+  tlPos['Position']=0
+                      
 
 #TimeLapse Screen
 def timeLapseScreen():
@@ -553,22 +570,33 @@ def timeLapseScreen():
     if button == 0:
       if started==False:
         tlPos["Starttime"]=time.time()
-        btn_labels[0]='Stop'
+        btn_labels[0]='Pause'
+        btn_labels[1]='Stop'
         buttons(btn_labels)
         started=True
-        motorEnable();
+        if gpio:
+          motorEnable()
+          checkEndStop()
         takeImage()
         lastimg=time.time()
-        if gpio:
-          checkEndStop()
       else:
         if started==True:
           started=False
           btn_labels[0]='Start'
           buttons(btn_labels)
-          motorDisable();
           if gpio:
+            motorDisable();
             removeCheckEndStop()
+    if button == 1:
+      started=False  
+      btn_labels[0]='Start'
+      btn_labels[1]=''
+      buttons(btn_labels)
+      rewind()
+      if gpio:
+        motorDisable();
+        removeCheckEndStop()
+      
     if button == 3:
       first=True
       mainScreen()
