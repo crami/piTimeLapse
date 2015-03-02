@@ -55,8 +55,8 @@ tlSet = { 'Intervall' : 10,
 
 dirList = ['Left','Right']
 
-esState = { 'Left' : 1,
-            'Right': 1
+esState = { 'Left' : 0,
+            'Right': 0
           }
         
 tlUnits = { 'Intervall' : 's',
@@ -382,14 +382,15 @@ def drawTimeLapseScreen(first):
   label_rect = label.get_rect()
   label_rect.x = 200
   label_rect.y = 10 + line_height * 3
-  
-  label = font.render(dirList[tlSet[Direction]], True, (255,255,255))
+  screen.blit(label, label_rect)
+   
+  label = font.render(dirList[tlSet['Direction']], True, (255,255,255))
   label_rect = label.get_rect()
   label_rect = label.get_rect()
   label_rect.x = 200
-  label_rect.y = 10 + line_height * 3
-  
-  screen.blit(label, label_rect)  
+  label_rect.y = 10 + line_height * 4
+  screen.blit(label, label_rect)
+
   pygame.display.flip()
 
 
