@@ -535,6 +535,7 @@ def moveCamera():
     if (esState[dirList[tlSet["Direction"]]] == 1):
       print("Endstop reached!")
       started=False
+      esReachedScreen()
       btn_labels=['Start','','','↩ Exit']
       buttons(btn_labels)
       if gpio:
@@ -625,6 +626,27 @@ def getDefaultIP():
   local_ip_address = s.getsockname()[0]
 
   return(local_ip_address)
+
+
+# EndStop reached screen
+def esReachedScreen():
+  newScreen("piTimeLapse - EndStop")
+   
+  btn_labels=['','','','↩ Exit']
+  buttons(btn_labels)
+       
+  font = pygame.font.SysFont('ubuntu', 18)
+
+  label = font.render("End stop reached!", True, (255,255,255))
+  label_rect = label.get_rect()
+  label_rect.center = [160,120]
+  screen.blit(label, label_rect)
+                     
+  pygame.display.flip()
+  while (1):
+    button=getButtonEvent()
+    if button == 3:
+      return
 
 
 # The info screen
