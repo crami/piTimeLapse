@@ -26,7 +26,9 @@ SCREEN_SIZE = (320, 240)
 buttoncolor = 50,50,255
 headercolor = 255,50,50
 wincolor = 40, 40, 90
-menucolor = [[50,50,100],[255,50,50],[200,75,75]]
+menucolor = [[50,50,100],[255,50,50],[50,200,200]]
+
+pulslength=0.002
 
 # Raspberry PI revision (GPIO has changed between 1 and 2)
 if gpio:
@@ -49,7 +51,6 @@ buttonStateOld = [1, 1, 1, 1]
 
 tlSet = { 'Intervall' : 10,
           'Stepsize'  : 10,
-          'Length'    : 180,
           'Direction' : 0
         }
 
@@ -61,7 +62,6 @@ esState = { 'Left' : 0,
         
 tlUnits = { 'Intervall' : 's',
             'Stepsize'  : 'mm',
-            'Length'    : 'cm'
           }
           
 tlPos = { 'Position'     : 0,
@@ -360,7 +360,7 @@ def drawTimeLapseScreen(first):
     clearTlScreen()
   
   # Values
-  label = font.render(str(tlPos['Position'])+" / "+str(tlSet['Length']), True, (255,255,255))
+  label = font.render(str(tlPos['Position']), True, (255,255,255))
   label_rect = label.get_rect()
   label_rect.x = 200
   label_rect.y = 10 + line_height
@@ -423,6 +423,7 @@ def mainScreen():
     select=checkOverflow(menu,select)
     if button == 2:
       menu_f[select]()
+      return
       
       
 #Config Screen
@@ -460,7 +461,7 @@ def configScreen():
 
     if button == 3:
       if selected==99:
-        mainScreen()
+        return
       else:
         selected=99
 
@@ -527,9 +528,9 @@ def moveCamera():
   
     while(tlPos['Position']>=posold and esState[dirList[tlSet["Direction"]]] == 0):
       GPIO.output(motorPulse,1)
-      time.sleep(0.005)
+      time.sleep(pulslength)
       GPIO.output(motorPulse,0)
-      time.sleep(0.005)
+      time.sleep(pulslength)
       posold=posold+movesize
       
     if (esState[dirList[tlSet["Direction"]]] == 1):
@@ -554,9 +555,9 @@ def rewind():
     
     while (esState[dirList[not tlSet["Direction"]]] == 0):
       GPIO.output(motorPulse,1)
-      time.sleep(0.005)
+      time.sleep(pulslength)
       GPIO.output(motorPulse,0)
-      time.sleep(0.005)
+      time.sleep(pulslength)
     
   tlPos['Position']=0
                       
@@ -589,8 +590,8 @@ def timeLapseScreen():
           motorEnable()
           checkEndStop()
         takeImage()
-        moveCamera()
         lastimg=time.time()
+        moveCamera()
       else:
         if started==True:
           started=False
@@ -612,12 +613,12 @@ def timeLapseScreen():
       
     if button == 3:
       first=True
-      mainScreen()
+      return
 
     if started==True:
       if lastimg+tlSet['Intervall'] <= time.time():
-        lastimg=time.time()
         takeImage()
+        lastimg=time.time()
         moveCamera()
 
 # Get default IP address
@@ -722,7 +723,7 @@ def systemScreen():
     if button == 2:
       menu_f[select]()
     if button == 3:
-      mainScreen()
+      return
 
 
 
@@ -740,4 +741,5 @@ splash()
 if gpio:
   gpioInit()
 
-mainScreen()
+while 1:
+  mainScreen()
