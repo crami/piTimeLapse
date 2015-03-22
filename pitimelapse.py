@@ -589,6 +589,7 @@ def timeLapseScreen():
           motorEnable()
           checkEndStop()
         takeImage()
+        moveCamera()
         lastimg=time.time()
       else:
         if started==True:
@@ -616,8 +617,8 @@ def timeLapseScreen():
     if started==True:
       if lastimg+tlSet['Intervall'] <= time.time():
         lastimg=time.time()
-        moveCamera()
         takeImage()
+        moveCamera()
 
 # Get default IP address
 def getDefaultIP():
@@ -646,6 +647,7 @@ def esReachedScreen():
   while (1):
     button=getButtonEvent()
     if button == 3:
+      first=True
       return
 
 
