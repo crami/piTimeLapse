@@ -26,9 +26,9 @@ SCREEN_SIZE = (320, 240)
 buttoncolor = 50,50,255
 headercolor = 255,50,50
 wincolor = 40, 40, 90
-menucolor = [[50,50,100],[255,50,50],[50,200,200]]
+menucolor = [[50,50,100],[255,50,50],[200,200,50]]
 
-pulslength=0.002
+pulslength=0.003
 
 # Raspberry PI revision (GPIO has changed between 1 and 2)
 if gpio:
