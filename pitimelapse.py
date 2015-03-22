@@ -26,9 +26,9 @@ SCREEN_SIZE = (320, 240)
 buttoncolor = 50,50,255
 headercolor = 255,50,50
 wincolor = 40, 40, 90
-menucolor = [[50,50,100],[255,50,50],[200,200,50]]
+menucolor = [[50,50,100],[255,50,50],[100,100,50]]
 
-pulslength=0.003
+pulslength=0.0035
 
 # Raspberry PI revision (GPIO has changed between 1 and 2)
 if gpio:
@@ -620,6 +620,8 @@ def timeLapseScreen():
         takeImage()
         lastimg=time.time()
         moveCamera()
+        if started==False:
+          first=True
 
 # Get default IP address
 def getDefaultIP():
@@ -648,7 +650,6 @@ def esReachedScreen():
   while (1):
     button=getButtonEvent()
     if button == 3:
-      first=True
       return
 
 
@@ -706,8 +707,8 @@ def systemScreen():
   btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
   buttons(btn_labels)
 
-  menu=["Info","Shutdown"]
-  menu_f = { 0: infoScreen, 1: shutdownScreen }
+  menu=["Info","Rewind","Shutdown"]
+  menu_f = { 0: infoScreen, 1: rewind ,2: shutdownScreen }
   select=0
 
   pygame.display.flip()
