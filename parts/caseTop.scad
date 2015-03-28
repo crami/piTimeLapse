@@ -18,12 +18,14 @@ difference(){
     translate([0,65-2,0]) cube([71,2,height]);
     translate([71-2,0,0]) cube([2,65,height]);
     translate([0,23.1,height-1]) cube([2,15.8,4.5]); // Micro SD
+    translate([11,13,1]) cube([51,38,2]); // LCD
   }
   //translate([21,9,0.5]) rotate([180,0,0]) scale(0.013) import("piTimeLapse.stl");
  
   translate([68,19.5,height-6]) cube([4,16,10]); // USB
   translate([8,65-3,height-3]) cube([12,8,5.5]); // Power
-  translate([12,14,-1]) cube([49,36,4]); // LCD
+
+  translate([12,14,-1]) cube([49,36,5]); // LCD
   translate([-0.5,12,height-3]) cube([4,6,4]); // Camera Jack
 
   translate([17,56,-1]) cylinder(4,3,3);
