@@ -22,6 +22,10 @@ difference() {
   translate([4,-0.5,9]) cube([14,3,13]);
   translate([x+w-0.5,20+w,2]) cube([3,7,17]);
 
-  translate([16,y/2+w,-0.5]) cylinder(3,1.6,1.6);
-  translate([16,y/2+w,1]) cylinder(3,3,3);
+  translate([16,y/2+w,-0.5]) cylinder(3,1.6,1.6); //screw hole
+  translate([16,y/2+w,1]) cylinder(3,3,3); // screw hole
+
+  translate([16,(y/2+w)-10,-0.5]) cylinder(3,1.6,1.6); //screw hole
+  translate([16,(y/2+w)-10,1]) cylinder(3,3,3); // screw hole
+
 }
