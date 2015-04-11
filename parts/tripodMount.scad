@@ -20,15 +20,15 @@ difference() {
     }
   }
   
-  translate([0,0,1]) hex(25.4*7/16,12);
+  translate([0,0,1]) hex((25.4*7/16)+0.5,12);
   translate([0,0,-1]) cylinder(h=3,r=(25.4/8)+0.5);
-  translate([15,0,-1]) cylinder(14,2.6,2.6);
-  translate([-15,0,-1]) cylinder(14,2.6,2.6);
+  translate([15,0,-1]) cylinder(14,2.7,2.7);
+  translate([-15,0,-1]) cylinder(14,2.7,2.7);
 
-  translate([15,0,10]) cylinder(0.6,4.3,2.6);
-  translate([-15,0,10]) cylinder(0.6,4.3,2.6);
+  translate([15,0,10]) cylinder(0.6,4.4,2.7);
+  translate([-15,0,10]) cylinder(0.6,4.4,2.7);
 
-  translate([15,0,-1]) cylinder(11.001,4.3,4.3);
-  translate([-15,0,-1]) cylinder(11.001,4.3,4.3);
+  translate([15,0,-1]) cylinder(11.001,4.4,4.4);
+  translate([-15,0,-1]) cylinder(11.001,4.4,4.4);
 
 }
