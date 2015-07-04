@@ -506,9 +506,12 @@ def checkEndStop():
 
 # Remove endstop events
 def removeCheckEndStop():
-  global endStop
-  for i in endStop:
-    GPIO.remove_event_detect(endStop[i])
+    global endStop
+    for i in endStop:
+        GPIO.remove_event_detect(endStop[i])
+        esState = { 'Left' : 0,
+                    'Right': 0
+                  }
 
 # Enable Stepper Motor
 def motorEnable():
