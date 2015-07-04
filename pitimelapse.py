@@ -554,24 +554,28 @@ def moveCamera():
     print("moveCamera")
 
 
+# rewind
 def rewind():
-  global tlSet
-  global tlPos
-  global esState
-  print("Rewinding")
-  if (gpio):
-    if (tlSet["Direction"] == 1):
-      GPIO.output(motorDir,0)
-    else:
-      GPIO.output(motorDir,1)
+    global tlSet
+    global tlPos
+    global esState
+    print("Rewinding")
+    if (gpio):
+        if (tlSet["Direction"] == 1):
+            GPIO.output(motorDir,0)
+        else:
+            GPIO.output(motorDir,1)
 
-    while (esState[dirList[not tlSet["Direction"]]] == 0):
-      GPIO.output(motorPulse,1)
-      time.sleep(pulslength)
-      GPIO.output(motorPulse,0)
-      time.sleep(pulslength)
+        while (esState[dirList[not tlSet["Direction"]]] == 0):
+            GPIO.output(motorPulse,1)
+            time.sleep(pulslength/1.5)
+            GPIO.output(motorPulse,0)
+            time.sleep(pulslength/1.5)
 
-  tlPos['Position']=0
+    print("Rewinding done")
+    tlPos['Position']=0
+    return
+
 
 # Maual Rewind
 def manualRewind():
@@ -580,6 +584,7 @@ def manualRewind():
     rewind()
     motorDisable()
     removeCheckEndStop()
+    return
 
 #TimeLapse Screen
 def timeLapseScreen():
@@ -659,13 +664,14 @@ def timeLapseScreen():
           print("Reset started")
           first=True
 
+
 # Get default IP address
 def getDefaultIP():
-  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-  s.connect(('8.8.8.8', 0))  # connecting to a UDP address doesn't send packets
-  local_ip_address = s.getsockname()[0]
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8', 0))  # connecting to a UDP address doesn't send packets
+    local_ip_address = s.getsockname()[0]
 
-  return(local_ip_address)
+    return(local_ip_address)
 
 
 # EndStop reached screen
@@ -737,6 +743,7 @@ def shutdownScreen():
     if button == 3:
       return
       #systemScreen()
+
 
 #System Screen
 def systemScreen():
