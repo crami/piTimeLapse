@@ -32,6 +32,7 @@ wincolor = 40, 40, 90
 menucolor = [[50,50,100],[255,50,50],[50,50,50]]
 
 pulslength=0.0035
+rewindpulslength=0.0025
 
 # Raspberry PI revision (GPIO has changed between 1 and 2)
 if gpio:
@@ -574,9 +575,9 @@ def rewind():
 
         while (esState[dirList[not tlSet["Direction"]]] == 0):
             GPIO.output(motorPulse,1)
-            time.sleep(pulslength*0.5)
+            time.sleep(rewindpulslength)
             GPIO.output(motorPulse,0)
-            time.sleep(pulslength*0.5)
+            time.sleep(rewindpulslength)
 
     print("Rewinding done")
     tlPos['Position']=0
