@@ -15,11 +15,11 @@ from subprocess import call
 from pygame.locals import *
 from pygame.compat import unichr_, unicode_
 try:
-  import RPi.GPIO as GPIO
-  gpio=True
+    import RPi.GPIO as GPIO
+    gpio=True
 except ImportError:
-  print("no GPIO module")
-  gpio=False
+    print("no GPIO module")
+    gpio=False
 
 from itertools import chain
 
@@ -35,18 +35,18 @@ pulslength=0.0035
 
 # Raspberry PI revision (GPIO has changed between 1 and 2)
 if gpio:
-  endStop = { 'Left': 12, 'Right': 13}
-  camFocus=16
-  camShutter=19
-  motorPulse=20
-  motorDir=21
-  motorEna=6
-  if GPIO.RPI_REVISION == 1:
-#    buttonPins = [17, 22, 23, 21]
-    print("This does not work on a revison 1 board, sorry!")
-    exit()
-  else:
-    buttonPins = [17, 22, 23, 27]
+    endStop = { 'Left': 12, 'Right': 13}
+    camFocus=16
+    camShutter=19
+    motorPulse=20
+    motorDir=21
+    motorEna=6
+    if GPIO.RPI_REVISION == 1:
+#       buttonPins = [17, 22, 23, 21]
+        print("This does not work on a revison 1 board, sorry!")
+        exit()
+    else:
+        buttonPins = [17, 22, 23, 27]
 
 movesize=0.2
 
@@ -78,66 +78,66 @@ posInc=0.01
 
 # Display the splash screen
 def splash():
-  newScreen("")
-  font = pygame.font.SysFont('matthiascramerhandwriting', 24)
-  message = "Welcome to piTime"
-  label = font.render(message, True, (255,255,255))
-  label_rect = label.get_rect()
-  label_rect.center = screen_rect.center
+    newScreen("")
+    font = pygame.font.SysFont('matthiascramerhandwriting', 24)
+    message = "Welcome to piTime"
+    label = font.render(message, True, (255,255,255))
+    label_rect = label.get_rect()
+    label_rect.center = screen_rect.center
 
-  # Blit image and text to the target surface.
-  screen.blit(label, label_rect)
-  pygame.display.flip()
-  time.sleep(1)
+    # Blit image and text to the target surface.
+    screen.blit(label, label_rect)
+    pygame.display.flip()
+    time.sleep(1)
 
 def butondemo():
-  for i in range (0, 4):
-    time.sleep(0.5)
-    buttonpress(i,1)
-    time.sleep(1)
-    buttonpress(i,0)
+    for i in range (0, 4):
+        time.sleep(0.5)
+        buttonpress(i,1)
+        time.sleep(1)
+        buttonpress(i,0)
 
 # Prepare a new screen
 def newScreen(title):
-  screen.fill(wincolor)
-  if (title != ""):
-    header = pygame.Rect(0, 0, screen_rect.width, 20)
-    screen.fill(headercolor, header)
-    font = pygame.font.SysFont('ubuntu', 16)
-    label = font.render(title, True, (255,255,255))
-    label_rect = label.get_rect()
-    label_rect.x = 4
-    label_rect.y = 2
-    screen.blit(label, label_rect)
+    screen.fill(wincolor)
+    if (title != ""):
+        header = pygame.Rect(0, 0, screen_rect.width, 20)
+        screen.fill(headercolor, header)
+        font = pygame.font.SysFont('ubuntu', 16)
+        label = font.render(title, True, (255,255,255))
+        label_rect = label.get_rect()
+        label_rect.x = 4
+        label_rect.y = 2
+        screen.blit(label, label_rect)
 
 # Draw the button labels
 def buttons(labels):
-  btn = pygame.Rect(0, 0, screen_rect.width/4 - 6, 20)
+    btn = pygame.Rect(0, 0, screen_rect.width/4 - 6, 20)
 
-  font = pygame.font.Font('FreeSans.ttf', 14)
+    font = pygame.font.Font('FreeSans.ttf', 14)
 
-  for i in range (0, 4):
-    btn.x=3+((screen_rect.width/4)*i)
-    btn.y=screen_rect.height-20
-    screen.fill(buttoncolor, btn)
-    label = font.render(labels[i], True, (255,255,255))
-    label_rect = label.get_rect()
-    label_rect.center = btn.center
-    screen.blit(label, label_rect)
+    for i in range (0, 4):
+        btn.x=3+((screen_rect.width/4)*i)
+        btn.y=screen_rect.height-20
+        screen.fill(buttoncolor, btn)
+        label = font.render(labels[i], True, (255,255,255))
+        label_rect = label.get_rect()
+        label_rect.center = btn.center
+        screen.blit(label, label_rect)
 
 # Mark a pressed button
 def buttonPress(num,toggle):
-  width=(screen_rect.width/4)-6
-  height=20
-  x=3+((screen_rect.width/4)*num)
-  y=screen_rect.height-20
+    width=(screen_rect.width/4)-6
+    height=20
+    x=3+((screen_rect.width/4)*num)
+    y=screen_rect.height-20
 
-  if (toggle):
-    pygame.draw.polygon(screen, (255,255,255), [[x,y],[x+width,y],[x+width,y+height],[x,y+height]], 1)
-  else:
-    pygame.draw.polygon(screen, buttoncolor, [[x,y],[x+width,y],[x+width,y+height],[x,y+height]], 1)
+    if (toggle):
+        pygame.draw.polygon(screen, (255,255,255), [[x,y],[x+width,y],[x+width,y+height],[x,y+height]], 1)
+    else:
+        pygame.draw.polygon(screen, buttoncolor, [[x,y],[x+width,y],[x+width,y+height],[x,y+height]], 1)
 
-  pygame.display.flip()
+        pygame.display.flip()
 
 # Framebuffer init
 def fbInit():
@@ -548,14 +548,16 @@ def moveCamera():
       btn_labels=['Start','','','↩ Exit']
       buttons(btn_labels)
       if gpio:
-        motorDisable();
+        motorDisable()
         removeCheckEndStop()
   else:
     print("moveCamera")
 
+
 def rewind():
   global tlSet
   global tlPos
+  global esState
   print("Rewinding")
   if (gpio):
     if (tlSet["Direction"] == 1):
@@ -571,6 +573,13 @@ def rewind():
 
   tlPos['Position']=0
 
+# Maual Rewind
+def manualRewind():
+    motorEnable()
+    checkEndStop()
+    rewind()
+    motorDisable()
+    removeCheckEndStop()
 
 #TimeLapse Screen
 def timeLapseScreen():
@@ -738,7 +747,7 @@ def systemScreen():
         buttons(btn_labels)
 
         menu=["Info","Rewind","Shutdown"]
-        menu_f = { 0: infoScreen, 1: rewind ,2: shutdownScreen }
+        menu_f = { 0: infoScreen, 1: manualRewind ,2: shutdownScreen }
 
         pygame.display.flip()
         while (1):
