@@ -29,7 +29,7 @@ SCREEN_SIZE = (320, 240)
 buttoncolor = 50,50,255
 headercolor = 255,50,50
 wincolor = 40, 40, 90
-menucolor = [[50,50,100],[255,50,50],[100,100,50]]
+menucolor = [[50,50,100],[255,50,50],[50,50,50]]
 
 pulslength=0.0035
 
@@ -73,6 +73,7 @@ tlPos = { 'Position'     : 0,
         }
 
 started = False
+pause = False
 posInc=0.01
 
 # Display the splash screen
@@ -321,8 +322,9 @@ def drawSettingsMenu(settings,units,select,selected):
 
 
 # Draw timelapse screen
-def drawTimeLapseScreen(first):
+def drawTimeLapseScreen(first,elapsed):
   global started
+  global pause
   global tlPos
   font = pygame.font.SysFont('ubuntu', 22)
 
@@ -378,7 +380,9 @@ def drawTimeLapseScreen(first):
 
   tc=0
   if started==True:
-    tc = time.time() - tlPos["Starttime"]
+      tc = time.time() - tlPos["Starttime"]
+  if pause==True:
+      tc = elapsed
 
   label = font.render("{:.1f}".format(tc) + " s", True, (255,255,255))
   label_rect = label.get_rect()
@@ -405,28 +409,29 @@ def checkOverflow(list, index):
 
 # Main Screen
 def mainScreen():
-  newScreen("piTimeLapse")
+    select=0
+    while(1):
+        newScreen("piTimeLapse")
 
-  btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
-  buttons(btn_labels)
+        btn_labels=['▼ Down','▲ Up','⇒ Select','']
+        buttons(btn_labels)
 
-  menu=["Config","Start Timelapse","System"]
-  menu_f = { 0: configScreen, 1: timeLapseScreen, 2: systemScreen }
-  select=0
+        menu=["Config","Start Timelapse","System"]
+        menu_f = { 0: configScreen, 1: timeLapseScreen, 2: systemScreen }
 
-  pygame.display.flip()
-  while (1):
-    drawSelectMenu(menu,select)
-    button=getButtonEvent()
-    if button == 0:
-      select=select+1
-    else:
-      if button == 1:
-        select=select-1
-    select=checkOverflow(menu,select)
-    if button == 2:
-      menu_f[select]()
-      return
+        pygame.display.flip()
+        while (1):
+            drawSelectMenu(menu,select)
+            button=getButtonEvent()
+            if button == 0:
+                select=select+1
+            else:
+                if button == 1:
+                    select=select-1
+            select=checkOverflow(menu,select)
+            if button == 2:
+                menu_f[select]()
+                break
 
 
 #Config Screen
@@ -545,6 +550,8 @@ def moveCamera():
       if gpio:
         motorDisable();
         removeCheckEndStop()
+  else:
+    print("moveCamera")
 
 def rewind():
   global tlSet
@@ -568,6 +575,7 @@ def rewind():
 #TimeLapse Screen
 def timeLapseScreen():
   global started
+  global pause
   global tlPos
   newScreen("piTimeLapse - Time Lapse")
 
@@ -577,14 +585,21 @@ def timeLapseScreen():
   pygame.display.flip()
   lastimg=0
   first=True
+  elapsed=0
 
   while (1):
-    drawTimeLapseScreen(first)
+    #print("Loop")
+    drawTimeLapseScreen(first,elapsed)
     first=False
     button=getButtonEvent()
-    if button == 0:
-      if started==False:
-        tlPos["Starttime"]=time.time()
+    if button == 0: # Pause/Start Button
+      if started==False: # Start
+        print("Start")
+        if pause==False:
+            tlPos["Starttime"]=time.time()
+        else:
+            pause=False
+            tlPos["Starttime"]=time.time()-elapsed
         btn_labels[0]='Pause'
         btn_labels[1]='Stop'
         buttons(btn_labels)
@@ -595,9 +610,14 @@ def timeLapseScreen():
         takeImage()
         lastimg=time.time()
         moveCamera()
-      else:
+        print("first...")
+      else: # Pause
         if started==True:
+          print("Pause")
+          pause=True
           started=False
+          elapsed=time.time()-tlPos["Starttime"]
+          print(elapsed)
           btn_labels[0]='Start'
           buttons(btn_labels)
           if gpio:
@@ -605,6 +625,8 @@ def timeLapseScreen():
             removeCheckEndStop()
     if button == 1:
       started=False
+      pause=False
+      elapsed=0
       btn_labels[0]='Start'
       btn_labels[1]=''
       buttons(btn_labels)
@@ -619,11 +641,13 @@ def timeLapseScreen():
       return
 
     if started==True:
+      print("Running...")
       if lastimg+tlSet['Intervall'] <= time.time():
         takeImage()
         lastimg=time.time()
         moveCamera()
         if started==False:
+          print("Reset started")
           first=True
 
 # Get default IP address
@@ -674,7 +698,8 @@ def infoScreen():
   while (1):
     button=getButtonEvent()
     if button == 3:
-      systemScreen()
+      return
+      #systemScreen()
 
 # The shutdown screen
 def shutdownScreen():
@@ -701,35 +726,37 @@ def shutdownScreen():
       else:
         print("Not running as root!")
     if button == 3:
-      systemScreen()
+      return
+      #systemScreen()
 
 #System Screen
 def systemScreen():
-  newScreen("piTimeLapse - System")
+    select=0
+    while(1):
+        newScreen("piTimeLapse - System")
+        btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
+        buttons(btn_labels)
 
-  btn_labels=['▼ Down','▲ Up','⇒ Select','↩ Exit']
-  buttons(btn_labels)
+        menu=["Info","Rewind","Shutdown"]
+        menu_f = { 0: infoScreen, 1: rewind ,2: shutdownScreen }
 
-  menu=["Info","Rewind","Shutdown"]
-  menu_f = { 0: infoScreen, 1: rewind ,2: shutdownScreen }
-  select=0
+        pygame.display.flip()
+        while (1):
+            drawSelectMenu(menu,select)
+            button=getButtonEvent()
+            if button == 0:
+                select=select+1
+            else:
+                if button == 1:
+                    select=select-1
 
-  pygame.display.flip()
-  while (1):
-    drawSelectMenu(menu,select)
-    button=getButtonEvent()
-    if button == 0:
-      select=select+1
-    else:
-      if button == 1:
-        select=select-1
-    select=checkOverflow(menu,select)
-    if button == 2:
-      menu_f[select]()
-    if button == 3:
-      return
+            select=checkOverflow(menu,select)
 
-
+            if button == 2:
+                menu_f[select]()
+                break
+            if button == 3:
+                return
 
 """ Main """
 
