@@ -506,6 +506,7 @@ def checkEndStop():
 
 # Remove endstop events
 def removeCheckEndStop():
+    global esState
     global endStop
     for i in endStop:
         GPIO.remove_event_detect(endStop[i])
