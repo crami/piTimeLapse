@@ -516,11 +516,11 @@ def removeCheckEndStop():
 
 # Enable Stepper Motor
 def motorEnable():
-  GPIO.output(motorEna,0)
+    GPIO.output(motorEna,0)
 
 # Disapble Stepper Motor
 def motorDisable():
-  GPIO.output(motorEna,1)
+    GPIO.output(motorEna,1)
 
 # Move the camera on the rail
 def moveCamera():
@@ -554,6 +554,8 @@ def moveCamera():
       if gpio:
         motorDisable()
         removeCheckEndStop()
+      return
+
   else:
     print("moveCamera")
 
@@ -628,7 +630,8 @@ def timeLapseScreen():
         takeImage()
         lastimg=time.time()
         moveCamera()
-        print("first...")
+        if started==False:
+            first=True
       else: # Pause
         if started==True:
           print("Pause")
@@ -665,8 +668,7 @@ def timeLapseScreen():
         lastimg=time.time()
         moveCamera()
         if started==False:
-          print("Reset started")
-          first=True
+            first=True
 
 
 # Get default IP address
@@ -680,6 +682,8 @@ def getDefaultIP():
 
 # EndStop reached screen
 def esReachedScreen():
+  global started
+  started = False
   newScreen("piTimeLapse - EndStop")
 
   btn_labels=['','','','↩ Exit']
