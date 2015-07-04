@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 
 """
+piTimeLapse is a program to run on a Raspberry PI and a piTFT display module with some additional
+electronics to drive a stepper motor and control a DSLR camera to produce moving time lapse movies.
+(c) 2015 by Matthias Cramer, cramer@freestone.net
 """
 
 import os
@@ -59,11 +62,11 @@ dirList = ['Left','Right']
 esState = { 'Left' : 0,
             'Right': 0
           }
-        
+
 tlUnits = { 'Intervall' : 's',
             'Stepsize'  : 'mm',
           }
-          
+
 tlPos = { 'Position'     : 0,
           'Starttime'    : 0,
           'PictureCount' : 0
@@ -111,7 +114,7 @@ def buttons(labels):
   btn = pygame.Rect(0, 0, screen_rect.width/4 - 6, 20)
 
   font = pygame.font.Font('FreeSans.ttf', 14)
-  
+
   for i in range (0, 4):
     btn.x=3+((screen_rect.width/4)*i)
     btn.y=screen_rect.height-20
@@ -120,14 +123,14 @@ def buttons(labels):
     label_rect = label.get_rect()
     label_rect.center = btn.center
     screen.blit(label, label_rect)
-    
+
 # Mark a pressed button
 def buttonPress(num,toggle):
   width=(screen_rect.width/4)-6
   height=20
   x=3+((screen_rect.width/4)*num)
   y=screen_rect.height-20
-  
+
   if (toggle):
     pygame.draw.polygon(screen, (255,255,255), [[x,y],[x+width,y],[x+width,y+height],[x,y+height]], 1)
   else:
@@ -156,10 +159,10 @@ def fbInit():
         continue
       found = True
       break
- 
+
     if not found:
       raise(Exception('No suitable video driver found!'))
-  
+
     size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
     print("Framebuffer size: %d x %d" % (size[0], size[1]))
     screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
@@ -169,7 +172,7 @@ def fbInit():
 def gpioInit():
   GPIO.setmode(GPIO.BCM)
   GPIO.setwarnings(False)
-  
+
   GPIO.setup(endStop['Left'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
   GPIO.setup(endStop['Right'], GPIO.IN, pull_up_down=GPIO.PUD_UP)
   GPIO.setup(camFocus, GPIO.OUT, initial=GPIO.LOW)
@@ -177,24 +180,24 @@ def gpioInit():
   GPIO.setup(motorPulse, GPIO.OUT, initial=GPIO.LOW)
   GPIO.setup(motorDir, GPIO.OUT, initial=GPIO.LOW)
   GPIO.setup(motorEna, GPIO.OUT, initial=GPIO.HIGH)
-  
+
   for i in buttonPins:
     GPIO.setup(i, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     print("GPIO {0} init".format(i))
-    
+
 # Get Gpio Button event
 def gpioGetButtons():
   buttonState = [0, 0, 0, 0]
   global buttonStateOld
   buttonevent = {"type": "none", "button": 99}
-  
+
   for i in range (0,4):
     buttonState[i]=GPIO.input(buttonPins[i])
     if (buttonStateOld[i] != buttonState[i]):
 #      print('Event on button {0} -> {1}'.format(buttonPins[i], buttonState[i]))
       if (buttonState[i] == 0):
         buttonevent["type"]=pygame.KEYDOWN
-      if (buttonState[i] == 1):  
+      if (buttonState[i] == 1):
         buttonevent["type"]=pygame.KEYUP
       buttonevent["button"]=i
       buttonPress(i,not buttonState[i])
@@ -218,7 +221,7 @@ def getButtonEvent():
       return(buttonevent["button"])
 #      if buttonevent["type"] == pygame.KEYUP:
 #      print("Button {0} released".format(buttonevent["button"]))
-    
+
   events = pygame.event.get()
   for event in events:
     button=-1
@@ -238,15 +241,15 @@ def getButtonEvent():
       if event.key == pygame.K_2:
         button=1
       if event.key == pygame.K_UP:
-        button=1            
+        button=1
       if event.key == pygame.K_3:
         button=2
       if event.key == pygame.K_RETURN:
-        button=2            
+        button=2
       if event.key == pygame.K_4:
         button=3
       if event.key == pygame.K_ESCAPE:
-        button=3            
+        button=3
       buttonPress(button,toggle)
       if (toggle==1):
         return(button)
@@ -277,7 +280,7 @@ def drawSelectMenu(items,select):
       label_rect = label.get_rect()
       label_rect.center = li.center
       screen.blit(label, label_rect)
-      
+
   pygame.display.flip()
 
 
@@ -286,7 +289,7 @@ def drawSettingsMenu(settings,units,select,selected):
   li = pygame.Rect(0, 0, screen_rect.width*0.8 , 24)
   font = pygame.font.SysFont('ubuntu', 18)
   i = 0
-  
+
   for key in settings:
       li.x=(screen_rect.width*0.1)
       li.y=((screen_rect.height/8) * i) + 40
@@ -302,7 +305,7 @@ def drawSettingsMenu(settings,units,select,selected):
         highlight.x=(screen_rect.width*0.7-4)
         highlight.y=((screen_rect.height/8) * i) + 40
         screen.fill(menucolor[2], highlight)
-        
+
       text=""
       if key == "Direction":
         text=dirList[settings[key] % 2]
@@ -334,7 +337,7 @@ def drawTimeLapseScreen(first):
     label_rect.x = 6
     label_rect.y = 10 + line_height
     screen.blit(label, label_rect)
-  
+
     label = font.render("Picture Count", True, (255,255,255))
     label_rect = label.get_rect()
     label_rect = label.get_rect()
@@ -348,24 +351,24 @@ def drawTimeLapseScreen(first):
     label_rect.x = 6
     label_rect.y = 10 + line_height * 3
     screen.blit(label, label_rect)
-    
+
     label = font.render("Direction", True, (255,255,255))
     label_rect = label.get_rect()
     label_rect = label.get_rect()
     label_rect.x = 6
     label_rect.y = 10 + line_height * 4
     screen.blit(label, label_rect)
-    
+
   else:
     clearTlScreen()
-  
+
   # Values
   label = font.render(str(tlPos['Position']), True, (255,255,255))
   label_rect = label.get_rect()
   label_rect.x = 200
   label_rect.y = 10 + line_height
   screen.blit(label, label_rect)
-  
+
   label = font.render(str(tlPos['PictureCount']), True, (255,255,255))
   label_rect = label.get_rect()
   label_rect = label.get_rect()
@@ -376,14 +379,14 @@ def drawTimeLapseScreen(first):
   tc=0
   if started==True:
     tc = time.time() - tlPos["Starttime"]
-    
+
   label = font.render("{:.1f}".format(tc) + " s", True, (255,255,255))
   label_rect = label.get_rect()
   label_rect = label.get_rect()
   label_rect.x = 200
   label_rect.y = 10 + line_height * 3
   screen.blit(label, label_rect)
-   
+
   label = font.render(dirList[tlSet['Direction']], True, (255,255,255))
   label_rect = label.get_rect()
   label_rect = label.get_rect()
@@ -394,7 +397,7 @@ def drawTimeLapseScreen(first):
   pygame.display.flip()
 
 
-# Check overflow of menu selector    
+# Check overflow of menu selector
 def checkOverflow(list, index):
   if (index < 0): index=len(list)-1
   if (index >= len(list)): index=0
@@ -424,8 +427,8 @@ def mainScreen():
     if button == 2:
       menu_f[select]()
       return
-      
-      
+
+
 #Config Screen
 def configScreen():
   newScreen("piTimeLapse - Config")
@@ -453,7 +456,7 @@ def configScreen():
           select=select-1
         else:
           tlSet[selkeys[select]]+=1
-    
+
     select=checkOverflow(tlSet,select)
 
     if button == 2:
@@ -482,11 +485,11 @@ def takeImage():
 # CallBack for Endstop
 def cbEndStopEvent(pin):
   global esState
-  
+
   lookup = {value: key for key, value in endStop.items()}
   value=GPIO.input(pin);
   esState[lookup[pin]]=value;
-  
+
   print("{0} Endstop has changed to {1}".format(lookup[pin],value))
 
 # Register event for endstop detection
@@ -516,7 +519,7 @@ def moveCamera():
   global tlPos
   global esState
   global started
-  
+
   posold=tlPos['Position']
   tlPos['Position']+=tlSet['Stepsize']
 
@@ -525,14 +528,14 @@ def moveCamera():
       GPIO.output(motorDir,1)
     else:
       GPIO.output(motorDir,0)
-  
+
     while(tlPos['Position']>=posold and esState[dirList[tlSet["Direction"]]] == 0):
       GPIO.output(motorPulse,1)
       time.sleep(pulslength)
       GPIO.output(motorPulse,0)
       time.sleep(pulslength)
       posold=posold+movesize
-      
+
     if (esState[dirList[tlSet["Direction"]]] == 1):
       print("Endstop reached!")
       started=False
@@ -552,15 +555,15 @@ def rewind():
       GPIO.output(motorDir,0)
     else:
       GPIO.output(motorDir,1)
-    
+
     while (esState[dirList[not tlSet["Direction"]]] == 0):
       GPIO.output(motorPulse,1)
       time.sleep(pulslength)
       GPIO.output(motorPulse,0)
       time.sleep(pulslength)
-    
+
   tlPos['Position']=0
-                      
+
 
 #TimeLapse Screen
 def timeLapseScreen():
@@ -601,7 +604,7 @@ def timeLapseScreen():
             motorDisable();
             removeCheckEndStop()
     if button == 1:
-      started=False  
+      started=False
       btn_labels[0]='Start'
       btn_labels[1]=''
       buttons(btn_labels)
@@ -610,7 +613,7 @@ def timeLapseScreen():
       if gpio:
         motorDisable();
         removeCheckEndStop()
-      
+
     if button == 3:
       first=True
       return
@@ -635,17 +638,17 @@ def getDefaultIP():
 # EndStop reached screen
 def esReachedScreen():
   newScreen("piTimeLapse - EndStop")
-   
+
   btn_labels=['','','','↩ Exit']
   buttons(btn_labels)
-       
+
   font = pygame.font.SysFont('ubuntu', 18)
 
   label = font.render("End stop reached!", True, (255,255,255))
   label_rect = label.get_rect()
   label_rect.center = [160,120]
   screen.blit(label, label_rect)
-                     
+
   pygame.display.flip()
   while (1):
     button=getButtonEvent()
@@ -656,24 +659,24 @@ def esReachedScreen():
 # The info screen
 def infoScreen():
   newScreen("piTimeLapse - Info")
-   
+
   btn_labels=['','','','↩ Exit']
   buttons(btn_labels)
-       
+
   font = pygame.font.SysFont('ubuntu', 18)
 
   label = font.render("IP Address: "+getDefaultIP(), True, (255,255,255))
   label_rect = label.get_rect()
   label_rect.center = [160,120]
   screen.blit(label, label_rect)
-                     
+
   pygame.display.flip()
   while (1):
     button=getButtonEvent()
     if button == 3:
       systemScreen()
-              
-# The shutdown screen                                                                            
+
+# The shutdown screen
 def shutdownScreen():
   newScreen("piTimeLapse - Shutdown")
 
@@ -686,7 +689,7 @@ def shutdownScreen():
   label_rect = label.get_rect()
   label_rect.center = [160,120]
   screen.blit(label, label_rect)
-                     
+
   pygame.display.flip()
   while (1):
     button=getButtonEvent()
