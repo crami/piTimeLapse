@@ -574,9 +574,9 @@ def rewind():
 
         while (esState[dirList[not tlSet["Direction"]]] == 0):
             GPIO.output(motorPulse,1)
-            time.sleep(pulslength/1.5)
+            time.sleep(pulslength*0.5)
             GPIO.output(motorPulse,0)
-            time.sleep(pulslength/1.5)
+            time.sleep(pulslength*0.5)
 
     print("Rewinding done")
     tlPos['Position']=0
